@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Controle Financeiro</title>
+  <base href="/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: 'var(--primary-color, #4f46e5)',
+            secondary: 'var(--secondary-color, #10b981)',
+            accent: 'var(--accent-color, #f59e0b)',
+            neutral: {
+              '50': '#f8fafc',
+              '100': '#f1f5f9',
+              '200': '#e2e8f0',
+              '300': '#cbd5e1',
+              '400': '#94a3b8',
+              '500': '#64748b',
+              '600': '#475569',
+              '700': '#334155',
+              '800': '#1e293b',
+              '900': '#0f172a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+<script type="importmap">
+{
+  "imports": {
+    "uuid": "https://aistudiocdn.com/uuid@^9.0.1",
+    "rxjs": "https://aistudiocdn.com/rxjs@^7.8.2?conditions=es2015",
+    "rxjs/operators": "https://aistudiocdn.com/rxjs@^7.8.2/operators?conditions=es2015",
+    "rxjs/ajax": "https://aistudiocdn.com/rxjs@^7.8.2/ajax?conditions=es2015",
+    "rxjs/webSocket": "https://aistudiocdn.com/rxjs@^7.8.2/webSocket?conditions=es2015",
+    "rxjs/testing": "https://aistudiocdn.com/rxjs@^7.8.2/testing?conditions=es2015",
+    "rxjs/fetch": "https://aistudiocdn.com/rxjs@^7.8.2/fetch?conditions=es2015",
+    "@angular/core": "https://next.esm.sh/@angular/core@^20.3.12?external=rxjs",
+    "@angular/platform-browser": "https://next.esm.sh/@angular/platform-browser@^20.3.12?external=rxjs",
+    "@angular/forms": "https://next.esm.sh/@angular/forms@^20.3.12?external=rxjs",
+    "@angular/compiler": "https://next.esm.sh/@angular/compiler@^20.3.12?external=rxjs",
+    "@angular/common": "https://next.esm.sh/@angular/common@^20.3.12?external=rxjs",
+    "@angular/common/http": "https://next.esm.sh/@angular/common@^20.3.12/http?external=rxjs",
+    "@angular/common/locales/pt": "https://next.esm.sh/@angular/common@^20.3.12/locales/pt?external=rxjs"
+  }
+}
+</script>
+</head>
+<body class="bg-neutral-100 antialiased">
+  <app-root></app-root>
+</body>
+</html>

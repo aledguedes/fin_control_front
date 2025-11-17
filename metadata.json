@@ -1,0 +1,5 @@
+{
+  "name": "MyFinControl",
+  "description": "Um sistema de gestão financeira mensal simples com suporte completo a despesas parceladas. Registre suas receitas, despesas e controle seus parcelamentos de forma fácil e intuitiva.",
+  "requestFramePermissions": []
+}

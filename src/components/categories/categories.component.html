@@ -1,0 +1,46 @@
+<div class="space-y-6">
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold text-neutral-800 mb-4">Gerenciar Categorias</h2>
+    <form (ngSubmit)="addCategory()" class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+      <div class="sm:col-span-2">
+        <label for="categoryName" class="block text-sm font-medium text-neutral-700">Nome da Categoria</label>
+        <input type="text" id="categoryName" [ngModel]="newCategoryName()" (ngModelChange)="newCategoryName.set($event)" name="categoryName" class="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Ex: Contas de Casa">
+      </div>
+      <div>
+        <label for="categoryType" class="block text-sm font-medium text-neutral-700">Tipo</label>
+        <select id="categoryType" [ngModel]="newCategoryType()" (ngModelChange)="newCategoryType.set($event)" name="categoryType" class="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+          <option value="expense">Despesa</option>
+          <option value="revenue">Receita</option>
+        </select>
+      </div>
+      <div class="sm:col-span-3 sm:text-right">
+        <button type="submit" [disabled]="!newCategoryName()" class="w-full sm:w-auto inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-300">
+          Adicionar Categoria
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="p-4 border-b border-neutral-200">
+        <h3 class="text-lg font-semibold text-emerald-700">Categorias de Receita</h3>
+      </div>
+      <ul class="divide-y divide-neutral-200">
+        @for(category of getRevenueCategories(); track category.id) {
+          <li class="px-4 py-3">{{ category.name }}</li>
+        }
+      </ul>
+    </div>
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="p-4 border-b border-neutral-200">
+        <h3 class="text-lg font-semibold text-rose-700">Categorias de Despesa</h3>
+      </div>
+      <ul class="divide-y divide-neutral-200">
+        @for(category of getExpenseCategories(); track category.id) {
+          <li class="px-4 py-3">{{ category.name }}</li>
+        }
+      </ul>
+    </div>
+  </div>
+</div>

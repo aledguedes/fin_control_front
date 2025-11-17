@@ -1,0 +1,259 @@
+<div class="space-y-6">
+
+  @if (shoppingService.activeList(); as activeList) {
+    <!-- Active Shopping List View -->
+    <div>
+      <div class="flex items-center justify-between mb-4">
+        <button (click)="shoppingService.setActiveList(null)" class="flex items-center gap-2 text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          Voltar para minhas listas
+        </button>
+      </div>
+      <h2 class="text-3xl font-bold text-neutral-800 mb-2">
+        Editando Lista: <span class="text-indigo-600">{{ activeList.name }}</span>
+      </h2>
+      <app-shopping-cart (completePurchase)="handleCompletePurchase()"></app-shopping-cart>
+    </div>
+  } @else {
+    @switch (view()) {
+      @case ('dashboard') {
+        <!-- Dashboard / Main Hub View -->
+        <div class="space-y-8">
+           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <h2 class="text-3xl font-bold text-neutral-800">Minhas Compras</h2>
+            </div>
+            
+            <!-- Action Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button (click)="isCreateListModalOpen.set(true)" class="text-left p-4 bg-indigo-500 text-white rounded-xl shadow-lg hover:bg-indigo-600 transition-all transform hover:-translate-y-1 flex items-center gap-4">
+                    <div class="bg-white/20 p-3 rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg">Nova Lista</span>
+                        <p class="text-sm opacity-90">Comece a planejar sua próxima compra.</p>
+                    </div>
+                </button>
+                <button (click)="view.set('products')" class="text-left p-4 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 flex items-center gap-4">
+                    <div class="bg-indigo-100 p-3 rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" /><path fill-rule="evenodd" d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg text-neutral-800">Gerenciar Produtos</span>
+                         <p class="text-sm text-neutral-600">Cadastre e edite seus produtos.</p>
+                    </div>
+                </button>
+                <button (click)="view.set('categories')" class="text-left p-4 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 flex items-center gap-4">
+                    <div class="bg-indigo-100 p-3 rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a1 1 0 011-1h5a1 1 0 01.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" /></svg>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg text-neutral-800">Gerenciar Categorias</span>
+                        <p class="text-sm text-neutral-600">Organize os produtos por tipo.</p>
+                    </div>
+                </button>
+            </div>
+
+
+            <!-- Unified Shopping Lists -->
+            <div class="bg-white rounded-lg shadow-md">
+              <div class="p-4 border-b border-neutral-200">
+                <h3 class="text-lg font-semibold text-neutral-700">Minhas Listas de Compras</h3>
+              </div>
+              @if (sortedShoppingLists().length > 0) {
+                <ul class="divide-y divide-neutral-200">
+                  @for(list of sortedShoppingLists(); track list.id) {
+                    <li class="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div class="flex-grow">
+                        <p class="font-semibold text-neutral-800">{{list.name}}</p>
+                        <p class="text-sm text-neutral-500">
+                          @if(list.status === 'finalizada') {
+                            Finalizada em: {{ list.completedAt | date:'dd/MM/yyyy' }}
+                          } @else {
+                            Criada em: {{ list.createdAt | date:'dd/MM/yyyy' }}
+                          }
+                        </p>
+                      </div>
+                      <div class="flex items-center gap-4 w-full sm:w-auto">
+                        @if(list.status === 'finalizada') {
+                          <span class="text-xs font-semibold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full whitespace-nowrap">Finalizada</span>
+                          <p class="font-bold text-neutral-700 flex-grow text-right">R$ {{ list.totalAmount | number:'1.2-2':'pt' }}</p>
+                        } @else {
+                          <span class="text-xs font-semibold bg-blue-100 text-blue-800 px-3 py-1 rounded-full whitespace-nowrap">Em Andamento</span>
+                        }
+                        
+                        <div class="flex items-center gap-2">
+                           @if(list.status === 'andamento') {
+                            <button (click)="selectList(list.id)" class="py-2 px-4 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition-colors text-sm font-medium">
+                              Abrir
+                            </button>
+                           }
+                          <button (click)="deleteList(list.id)" class="p-2 rounded-md text-rose-500 hover:bg-rose-100 transition-colors" aria-label="Excluir lista">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                          </button>
+                        </div>
+
+                      </div>
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <div class="text-center p-12 text-neutral-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h7.5M8.25 12h7.5m-7.5 5.25h7.5M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h18v18H3V3z" /></svg>
+                  <p class="mt-4 font-semibold">Nenhuma lista de compras criada.</p>
+                  <p class="text-sm">Clique em "Nova Lista" para começar.</p>
+                </div>
+              }
+            </div>
+        </div>
+      }
+      @case ('categories') {
+        <!-- Category Management View -->
+        <div class="space-y-6">
+           <div class="flex items-center justify-between">
+             <h2 class="text-3xl font-bold text-neutral-800">Gerenciar Categorias</h2>
+             <button (click)="goBackToDashboard()" class="flex items-center gap-2 text-sm font-medium text-indigo-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+               Voltar ao Painel
+             </button>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold text-neutral-700 mb-3">Adicionar Categoria</h3>
+            <form #newCatForm="ngForm" (ngSubmit)="addCategory()" class="flex flex-col sm:flex-row gap-3">
+              <input type="text" [(ngModel)]="newCategoryName" name="newCategoryName" required class="flex-grow block w-full rounded-md border-neutral-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-3 px-4" placeholder="Ex: Higiene Pessoal">
+              <button type="submit" [disabled]="!newCatForm.valid || !newCategoryName()" class="w-full sm:w-auto inline-flex justify-center py-3 px-5 rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300">Adicionar</button>
+            </form>
+          </div>
+          <div class="bg-white rounded-lg shadow-md">
+            <ul class="divide-y divide-neutral-200">
+              @for(category of shoppingService.shoppingCategories(); track category.id) {
+                <li class="p-4">
+                  @if (editingCategoryId() === category.id) {
+                    <form (ngSubmit)="saveCategory(category.id)" class="flex items-center gap-3">
+                      <input type="text" [(ngModel)]="editingCategoryName" name="editingCategoryName" required class="flex-grow block w-full rounded-md border-neutral-300 shadow-sm py-2 px-3">
+                      <button type="submit" [disabled]="!editingCategoryName()" class="py-2 px-3 rounded-md text-white bg-emerald-600 hover:bg-emerald-700">Salvar</button>
+                      <button type="button" (click)="cancelEditCategory()" class="py-2 px-3 rounded-md bg-neutral-100 hover:bg-neutral-200">Cancelar</button>
+                    </form>
+                  } @else {
+                    <div class="flex justify-between items-center">
+                      <p class="font-medium text-neutral-800">{{ category.name }}</p>
+                      <div class="flex items-center gap-3">
+                        <button (click)="startEditCategory(category)" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">Editar</button>
+                        <button (click)="deleteCategory(category.id)" class="text-sm font-medium text-rose-600 hover:text-rose-800">Excluir</button>
+                      </div>
+                    </div>
+                  }
+                </li>
+              }
+            </ul>
+          </div>
+        </div>
+      }
+      @case ('products') {
+        <!-- Product Management View -->
+        <div class="space-y-6">
+           <div class="flex items-center justify-between">
+             <h2 class="text-3xl font-bold text-neutral-800">Gerenciar Produtos</h2>
+             <button (click)="goBackToDashboard()" class="flex items-center gap-2 text-sm font-medium text-indigo-600">
+               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+               Voltar ao Painel
+             </button>
+           </div>
+           <div class="bg-white p-6 rounded-lg shadow-md">
+             <h3 class="text-lg font-semibold text-neutral-700 mb-3">Adicionar Produto</h3>
+             <form #newProdForm="ngForm" (ngSubmit)="addProduct()" class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
+               <div class="sm:col-span-2">
+                 <label for="newProductName" class="block text-sm font-medium text-neutral-700">Nome do Produto</label>
+                 <input type="text" id="newProductName" [(ngModel)]="newProductName" name="newProductName" required class="mt-1 block w-full rounded-md border-neutral-300 shadow-sm py-2 px-3" placeholder="Ex: Arroz Integral 5kg">
+               </div>
+               <div>
+                 <label for="newProductCategory" class="block text-sm font-medium text-neutral-700">Categoria</label>
+                 <select id="newProductCategory" [(ngModel)]="newProductCategoryId" name="newProductCategoryId" required class="mt-1 block w-full rounded-md border-neutral-300 shadow-sm py-2 px-3">
+                   <option value="" disabled>Selecione...</option>
+                   @for(cat of shoppingService.shoppingCategories(); track cat.id) { <option [value]="cat.id">{{cat.name}}</option> }
+                 </select>
+               </div>
+               <div>
+                  <label for="newProductUnit" class="block text-sm font-medium text-neutral-700">Unidade</label>
+                  <select id="newProductUnit" [(ngModel)]="newProductUnit" name="newProductUnit" required class="mt-1 block w-full rounded-md border-neutral-300 shadow-sm py-2 px-3">
+                    @for(unit of productUnits; track unit.value) { <option [value]="unit.value">{{ unit.label }}</option> }
+                  </select>
+               </div>
+               <div class="sm:col-span-4 sm:text-right">
+                <button type="submit" [disabled]="!newProdForm.valid" class="w-full sm:w-auto inline-flex justify-center py-2 px-4 rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300">Adicionar Produto</button>
+               </div>
+             </form>
+           </div>
+           <div class="bg-white rounded-lg shadow-md">
+             <ul class="divide-y divide-neutral-200">
+               @for(group of productsGroupedByCategory(); track group.id) {
+                 <li class="p-4">
+                   <h4 class="font-bold text-indigo-700 mb-2">{{ group.name }}</h4>
+                   <ul class="space-y-2">
+                     @for(product of group.products; track product.id) {
+                       <li class="ml-4">
+                         @if (editingProductId() === product.id) {
+                           <form (ngSubmit)="saveProduct()" class="flex flex-wrap items-center gap-3">
+                             <input type="text" [(ngModel)]="editingProduct()!.name" name="editingProductName" required class="flex-grow min-w-[200px] block w-full sm:w-auto rounded-md border-neutral-300 shadow-sm py-2 px-3">
+                             <select [(ngModel)]="editingProduct()!.categoryId" name="editingProductCategory" required class="rounded-md border-neutral-300 shadow-sm py-2 px-3">
+                               @for(cat of shoppingService.shoppingCategories(); track cat.id) { <option [value]="cat.id">{{cat.name}}</option> }
+                             </select>
+                             <select [(ngModel)]="editingProduct()!.unit" name="editingProductUnit" required class="rounded-md border-neutral-300 shadow-sm py-2 px-3">
+                                @for(unit of productUnits; track unit.value) { <option [value]="unit.value">{{ unit.label }}</option> }
+                             </select>
+                             <div class="flex gap-2 ml-auto">
+                                <button type="submit" [disabled]="!editingProduct()?.name" class="py-2 px-3 rounded-md text-white bg-emerald-600 hover:bg-emerald-700">Salvar</button>
+                                <button type="button" (click)="cancelEditProduct()" class="py-2 px-3 rounded-md bg-neutral-100 hover:bg-neutral-200">Cancelar</button>
+                             </div>
+                           </form>
+                         } @else {
+                           <div class="flex justify-between items-center">
+                             <p class="text-neutral-800">{{ product.name }} <span class="text-sm text-neutral-500">({{ getUnitLabel(product.unit) }})</span></p>
+                             <div class="flex items-center gap-3">
+                               <button (click)="startEditProduct(product)" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">Editar</button>
+                               <button (click)="deleteProduct(product.id)" class="text-sm font-medium text-rose-600 hover:text-rose-800">Excluir</button>
+                             </div>
+                           </div>
+                         }
+                       </li>
+                     }
+                   </ul>
+                 </li>
+               }
+             </ul>
+           </div>
+        </div>
+      }
+    }
+  }
+
+  <!-- CREATE LIST MODAL -->
+  @if(isCreateListModalOpen()) {
+    <div class="fixed inset-0 bg-black bg-opacity-60 z-40 flex justify-center items-center p-4" (click)="isCreateListModalOpen.set(false)">
+      <div class="bg-white rounded-lg shadow-2xl w-full max-w-md relative" (click)="$event.stopPropagation()">
+        <button (click)="isCreateListModalOpen.set(false)" class="absolute top-3 right-3 text-neutral-400 hover:text-neutral-600 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+        <div class="p-6">
+          <h2 class="text-2xl font-bold text-neutral-800 mb-6">Criar Nova Lista de Compras</h2>
+          <form #createListForm="ngForm" (ngSubmit)="createList()">
+              <div>
+                <label for="newListNameModal" class="block text-sm font-medium text-neutral-700">Nome da Lista</label>
+                <input type="text" id="newListNameModal" name="newListNameModal" [(ngModel)]="newListName" required class="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 text-base" placeholder="Ex: Compras da Semana">
+              </div>
+              <div class="mt-8 flex justify-end gap-3">
+                <button type="button" (click)="isCreateListModalOpen.set(false)" class="px-4 py-2 text-sm font-medium text-neutral-700 bg-white border border-neutral-300 rounded-md shadow-sm hover:bg-neutral-50">
+                  Cancelar
+                </button>
+                <button type="submit" [disabled]="createListForm.invalid" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 disabled:bg-indigo-300">
+                  Criar e Abrir Lista
+                </button>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  }
+</div>
