@@ -131,7 +131,7 @@ export class ShoppingCartComponent {
           categoryId: product.categoryId,
           unit: product.unit
         };
-      }).filter((item): item is CartItem => item !== null);
+      }).filter((item) => item !== null);
 
       return {
         ...list,
