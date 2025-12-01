@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, signal, inject, effect, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataService } from '../../services/data.service';
-import { Transaction } from '../../models/transaction.model';
+import { Transaction, MonthlyTransaction } from '../../models/transaction.model';
 import { UiService } from '../../services/ui.service';
 import { finalize } from 'rxjs';
 
@@ -52,15 +52,27 @@ export class DashboardComponent {
     return this.dataService.getCategoryById(category_id)?.name ?? 'Sem Categoria';
   }
 
-  trackById(index: number, item: Transaction): string {
+  trackById(index: number, item: MonthlyTransaction): string {
       return item.id;
   }
   
-  onEdit(transaction: Transaction) {
+  onEdit(monthlyTx: MonthlyTransaction) {
+    const transaction: Partial<Transaction> = {
+      id: monthlyTx.id,
+      description: monthlyTx.description,
+      amount: monthlyTx.amount,
+      type: monthlyTx.type,
+      transactionDate: monthlyTx.date,
+      categoryId: monthlyTx.categoryId,
+      isInstallment: monthlyTx.isInstallment ?? false,
+      isRecurrent: monthlyTx.isRecurrent ?? false,
+      paymentMethod: monthlyTx.paymentMethod,
+      totalInstallments: monthlyTx.totalInstallments,
+    };
     this.uiService.openTransactionModal(transaction);
   }
 
-  onDelete(transaction: Transaction) {
+  onDelete(transaction: MonthlyTransaction) {
     if (confirm('Tem certeza que deseja excluir este lançamento? Se for um parcelamento, a transação original e todas as parcelas futuras serão removidas.')) {
         this.deletingId.set(transaction.id);
         this.dataService.deleteTransaction(transaction.id).pipe(

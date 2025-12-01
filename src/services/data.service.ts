@@ -3,21 +3,20 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 // Fix: Import MonthlyView from the model file
 import { Transaction, Category, InstallmentPlan, MonthlyView, CategoryResponse, InstallmentPlanResponse } from '../models/transaction.model';
 import { Observable, tap, forkJoin, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+// FIX: Import `map` operator from rxjs.
+import { catchError, map } from 'rxjs/operators';
 import { NotificationService } from './notification.service';
 import { environment } from '../environments/environment';
 
-// Fix: Removed local MonthlyView interface definition
 @Injectable({
   providedIn: 'root',
 })
 export class DataService {
-  // Fix: Explicitly type the injected HttpClient to resolve property access errors.
   private http: HttpClient = inject(HttpClient);
   private notificationService = inject(NotificationService);
   private apiUrl = `${environment.apiUrl}/financial`;
 
-  private categories = signal<Category[]>([]);
+  private categories = signal<FinancialCategory[]>([]);
   private installmentPlans = signal<InstallmentPlan[]>([]);
   private monthlyView = signal<MonthlyView | null>(null);
   private _navigateToInstallments = signal(false);
@@ -88,8 +87,8 @@ export class DataService {
     );
   }
 
-  addCategory(categoryData: Omit<Category, 'id'>): Observable<Category> {
-    return this.http.post<Category>(`${this.apiUrl}/categories`, categoryData).pipe(
+  addCategory(categoryData: Omit<FinancialCategory, 'id'>): Observable<FinancialCategory> {
+    return this.http.post<FinancialCategory>(`${this.apiUrl}/categories`, categoryData).pipe(
       tap(newCategory => {
         this.categories.update(current => [...current, newCategory].sort((a,b) => a.name.localeCompare(b.name)));
         this.notificationService.show('Categoria adicionada!', 'success');
@@ -101,7 +100,7 @@ export class DataService {
     );
   }
 
-  getCategoryById(id: string): Category | undefined {
+  getCategoryById(id: string): FinancialCategory | undefined {
     return this.categories().find(c => c.id === id);
   }
   

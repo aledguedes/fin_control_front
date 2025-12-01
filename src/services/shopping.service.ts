@@ -99,7 +99,6 @@ export class ShoppingService {
 
   syncList(list: ShoppingList): Observable<ShoppingList> {
     const payload = {
-      list: {
         name: list.name,
         status: list.status,
         items: list.items.map(item => ({
@@ -109,7 +108,6 @@ export class ShoppingService {
           checked: item.checked,
           product_id: item.productId,
         })),
-      },
     };
 
     return this.http.put<ShoppingList>(`${this.apiUrl}/lists/${list.id}`, payload).pipe(
@@ -138,7 +136,6 @@ export class ShoppingService {
   completeActiveList(): Observable<any> {
     const list = this.activeList();
     if (!list) return of(null);
-    // Fix: Explicitly type the HTTP post request to avoid type inference issues.
     return this.http.post<object>(`${this.apiUrl}/lists/${list.id}/complete`, {}).pipe(
       tap(() => {
         this.shoppingLists.update(lists =>
@@ -160,7 +157,6 @@ export class ShoppingService {
 
   updateShoppingCategory(category: ShoppingCategory): Observable<ShoppingCategory> {
     return this.http.put<ShoppingCategory>(`${this.apiUrl}/categories/${category.id}`, category).pipe(
-      // Fix: Explicitly type the response to resolve property access errors.
       tap((updatedCategory: ShoppingCategory) => {
         this.shoppingCategories.update(c => c.map(cat => cat.id === updatedCategory.id ? updatedCategory : cat));
       })
@@ -221,13 +217,12 @@ export class ShoppingService {
     );
   }
 
-  addMultipleItems(itemsData: { productId: string, quantity: number, price: number }[]): Observable<CartItem[]> {
+  addMultipleItems(itemsData: { productId: string, quantity: number, price: number }[]): Observable<ShoppingListItem[]> {
     const activeId = this.activeListId();
     if (!activeId) return throwError(() => new Error('No active list'));
 
-    return this.http.post<CartItem[]>(`${this.apiUrl}/lists/${activeId}/items`, itemsData).pipe(
-      // Fix: Explicitly type the response to resolve property access errors.
-      tap((newItems: CartItem[]) => {
+    return this.http.post<ShoppingListItem[]>(`${this.apiUrl}/lists/${activeId}/items`, itemsData).pipe(
+      tap((newItems: ShoppingListItem[]) => {
         this.shoppingLists.update(lists => lists.map(l => {
           if (l.id === activeId) {
             return { ...l, items: [...l.items, ...newItems] };

@@ -79,7 +79,7 @@
     } @else if (dataService.currentMonthlyView(); as monthlyView) {
       @if (monthlyView.transactions.length > 0) {
         <ul class="divide-y divide-neutral-200">
-          @for (transaction of monthlyView.transactions; track trackById(index, transaction)) {
+          @for (transaction of monthlyView.transactions; track trackById($index, transaction)) {
             <li class="p-4 flex items-center justify-between hover:bg-neutral-50 transition-colors group">
               <div class="flex items-center flex-1 min-w-0">
                   @if (transaction.type === 'revenue') {

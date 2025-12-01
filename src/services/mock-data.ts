@@ -1,12 +1,12 @@
-import { Transaction, Category } from '../models/transaction.model';
-import { ShoppingList, ShoppingCategory, Product } from '../models/shopping.model';
+import { Transaction, FinancialCategory } from '../models/transaction.model';
+import { ShoppingList, ShoppingCategory, Product, ShoppingListItem } from '../models/shopping.model';
 
 export const MOCK_USERS = [
   { id: 'user-1', username: 'admin', password: 'admin', email: 'admin@test.com' },
   { id: 'user-2', username: 'alex', password: '123', email: 'alexandredguedes@gmail.com' },
 ];
 
-export const MOCK_FINANCIAL_CATEGORIES: Category[] = [
+export const MOCK_FINANCIAL_CATEGORIES: FinancialCategory[] = [
   { id: 'c1', name: 'Salário', type: 'revenue' },
   { id: 'c2', name: 'Freelance', type: 'revenue' },
   { id: 'c3', name: 'Moradia', type: 'expense' },
@@ -43,7 +43,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
     id: 't7', type: 'expense', amount: 49.90, date: '2024-07-20',
     description: 'Assinatura Streaming', category_id: 'c6', paymentMethod: 'Crédito', isInstallment: false, isRecurrent: true,
   },
-];
+] as Transaction[];
 
 export const MOCK_SHOPPING_CATEGORIES: ShoppingCategory[] = [
     { id: 'sc1', name: 'Mercearia' },
