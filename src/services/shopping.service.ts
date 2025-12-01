@@ -62,6 +62,11 @@ export class ShoppingService {
       return;
     }
 
+    const preloadedList = this.shoppingLists().find(list => list.id === listId);
+    if (preloadedList) {
+      this.activeListId.set(listId);
+    }
+
     const draft = localStorage.getItem(`shopping_list_draft_${listId}`);
     
     const syncAndSet = (listToSync: ShoppingList) => {

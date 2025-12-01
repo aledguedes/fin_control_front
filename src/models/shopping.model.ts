@@ -55,7 +55,7 @@ export interface ShoppingList {
   name: string;
   created_at: string; // YYYY-MM-DD
   items: CartItem[];
-  status: 'pending' | 'completed';
+  status: 'pending' | 'completed' | 'andamento';
   completedAt?: string; // YYYY-MM-DD
   totalAmount?: number;
   userId?: string;
