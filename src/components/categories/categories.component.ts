@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DataService } from '../../services/data.service';
 import { finalize } from 'rxjs';
+import { FinancialCategory } from '../../models/transaction.model';
 
 @Component({
   selector: 'app-categories',
@@ -27,7 +28,7 @@ export class CategoriesComponent {
     this.isSubmitting.set(true);
     const { name, type } = this.categoryForm.getRawValue();
     if (name && type) {
-      this.dataService.addCategory({ name, type }).pipe(
+      this.dataService.addCategory({ name, type } as Omit<FinancialCategory, 'id'>).pipe(
         finalize(() => this.isSubmitting.set(false))
       ).subscribe({
         next: () => {

@@ -47,7 +47,7 @@ export class TransactionFormComponent implements OnInit {
       amount: [data?.amount ?? null, !isInstallment ? Validators.required : null],
       categoryId: [data?.categoryId ?? null, Validators.required],
       paymentMethod: [data?.paymentMethod ?? 'Débito', Validators.required],
-      date: [data?.date ?? new Date().toISOString().split('T')[0], Validators.required],
+      transactionDate: [data?.transactionDate ?? new Date().toISOString().split('T')[0], Validators.required],
       isInstallment: [isInstallment],
       isRecurrent: [data?.isRecurrent ?? false],
       installments: this.fb.group({
@@ -127,7 +127,7 @@ export class TransactionFormComponent implements OnInit {
       id: formValue.id || undefined!,
       type: formValue.type,
       amount: formValue.amount,
-      date: formValue.date,
+      transactionDate: formValue.transactionDate,
       description: formValue.description,
       categoryId: formValue.categoryId,
       paymentMethod: formValue.paymentMethod,
@@ -138,7 +138,7 @@ export class TransactionFormComponent implements OnInit {
         paidInstallments: formValue.installments.paidInstallments,
         startDate: formValue.installments.startDate
       } : undefined
-    };
+    } as Transaction;
     
     this.saveTransaction.emit(transactionData);
   }

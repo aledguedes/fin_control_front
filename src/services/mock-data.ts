@@ -1,12 +1,12 @@
-import { Transaction, Category } from '../models/transaction.model';
-import { ShoppingList, ShoppingCategory, Product } from '../models/shopping.model';
+import { Transaction, FinancialCategory } from '../models/transaction.model';
+import { ShoppingList, ShoppingCategory, Product, ShoppingListItem } from '../models/shopping.model';
 
 export const MOCK_USERS = [
   { id: 'user-1', username: 'admin', password: 'admin', email: 'admin@test.com' },
   { id: 'user-2', username: 'alex', password: '123', email: 'alexandredguedes@gmail.com' },
 ];
 
-export const MOCK_FINANCIAL_CATEGORIES: Category[] = [
+export const MOCK_FINANCIAL_CATEGORIES: FinancialCategory[] = [
   { id: 'c1', name: 'Salário', type: 'revenue' },
   { id: 'c2', name: 'Freelance', type: 'revenue' },
   { id: 'c3', name: 'Moradia', type: 'expense' },
@@ -20,30 +20,30 @@ export const MOCK_FINANCIAL_CATEGORIES: Category[] = [
 export const MOCK_TRANSACTIONS: Transaction[] = [
   // Receitas
   {
-    id: 't1', type: 'revenue', amount: 5000, date: '2024-07-05',
+    id: 't1', type: 'revenue', amount: 5000, transactionDate: '2024-07-05',
     description: 'Salário Mensal', categoryId: 'c1', paymentMethod: 'Transferência', isInstallment: false,
   },
   // Despesas à vista
   {
-    id: 't2', type: 'expense', amount: 1500, date: '2024-07-10',
+    id: 't2', type: 'expense', amount: 1500, transactionDate: '2024-07-10',
     description: 'Aluguel', categoryId: 'c3', paymentMethod: 'Boleto', isInstallment: false,
   },
   {
-    id: 't3', type: 'expense', amount: 800, date: '2024-07-15',
+    id: 't3', type: 'expense', amount: 800, transactionDate: '2024-07-15',
     description: 'Compras do Mês', categoryId: 'c4', paymentMethod: 'Crédito', isInstallment: false,
   },
   // Despesa Parcelada
   {
-    id: 't4', type: 'expense', amount: 2400, date: '2024-05-20',
+    id: 't4', type: 'expense', amount: 2400, transactionDate: '2024-05-20',
     description: 'Curso de Inglês', categoryId: 'c7', paymentMethod: 'Carnê', isInstallment: true,
     installments: { totalInstallments: 12, paidInstallments: 0, startDate: '2024-06-10' },
   },
    // Despesa Recorrente
   {
-    id: 't7', type: 'expense', amount: 49.90, date: '2024-07-20',
+    id: 't7', type: 'expense', amount: 49.90, transactionDate: '2024-07-20',
     description: 'Assinatura Streaming', categoryId: 'c6', paymentMethod: 'Crédito', isInstallment: false, isRecurrent: true,
   },
-];
+] as Transaction[];
 
 export const MOCK_SHOPPING_CATEGORIES: ShoppingCategory[] = [
     { id: 'sc1', name: 'Mercearia' },
@@ -78,7 +78,6 @@ export const MOCK_PRODUCTS: Product[] = [
     // Hortifruti
     { id: 'p4', name: 'Maçã', categoryId: 'sc3', unit: 'kg' },
     { id: 'p7', name: 'Alface Crespa', categoryId: 'sc3', unit: 'un' },
-    // Fix: Added missing 'unit' property and corrected 'categoryId'.
     { id: 'p16', name: 'Banana Prata', categoryId: 'sc3', unit: 'kg' },
     { id: 'p17', name: 'Tomate', categoryId: 'sc3', unit: 'kg' },
     { id: 'p18', name: 'Cebola', categoryId: 'sc3', unit: 'kg' },
@@ -119,7 +118,7 @@ export const MOCK_SHOPPING_LISTS: ShoppingList[] = [
         items: [
             { id: 'i1', productId: 'p1', name: 'Arroz Integral 5kg', quantity: 1, price: 25.50, checked: true, categoryId: 'sc1', unit: 'un' },
             { id: 'i2', productId: 'p4', name: 'Maçã', quantity: 1.5, price: 8.99, checked: false, categoryId: 'sc3', unit: 'kg' },
-        ]
+        ] as ShoppingListItem[]
     },
     {
         id: 'sl2', name: 'Compras de Junho', status: 'completed', createdAt: '2024-06-15', completedAt: '2024-06-16', totalAmount: 157.80,

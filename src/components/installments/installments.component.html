@@ -28,7 +28,7 @@
                 }
               }
             </div>
-            <p class="text-sm text-neutral-500 mt-1">{{plan.category.name}} &middot; {{ plan.paymentMethod }}</p>
+            <p class="text-sm text-neutral-500 mt-1">{{ getCategoryName(plan.categoryId) }}</p>
 
             <div class="mt-4">
               <div class="flex justify-between text-sm font-medium text-neutral-600">
@@ -44,15 +44,15 @@
                 <div class="text-neutral-600">Valor Total:</div>
                 <div class="font-semibold text-right">{{ plan.totalAmount | number:'1.2-2':'pt' }}</div>
                 <div class="text-emerald-600">Valor Pago:</div>
-                <div class="font-semibold text-emerald-600 text-right">{{ plan.paidAmount | number:'1.2-2':'pt' }}</div>
+                <div class="font-semibold text-emerald-600 text-right">{{ getPaidAmount(plan) | number:'1.2-2':'pt' }}</div>
                 <div class="text-rose-600">Valor Pendente:</div>
-                <div class="font-semibold text-rose-600 text-right">{{ plan.pendingAmount | number:'1.2-2':'pt' }}</div>
+                <div class="font-semibold text-rose-600 text-right">{{ getPendingAmount(plan) | number:'1.2-2':'pt' }}</div>
             </div>
           </div>
           <div class="bg-neutral-50 px-5 py-3 text-xs text-neutral-500 border-t">
             <div class="flex justify-between">
               <span>Início: {{ plan.startDate | date:'dd/MM/y' }}</span>
-              <span>Término: {{ plan.endDate | date:'dd/MM/y' }}</span>
+              <span>Término: {{ getEndDate(plan) | date:'dd/MM/y' }}</span>
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, of, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
-import { CartItem, ShoppingCategory, ShoppingList, Product } from '../models/shopping.model';
+import { ShoppingListItem, ShoppingCategory, ShoppingList, Product } from '../models/shopping.model';
 import { NotificationService } from './notification.service';
 import { environment } from '../environments/environment';
 
@@ -31,14 +31,14 @@ export class ShoppingService {
 
   loadInitialData(): Observable<any> {
     return forkJoin({
-      lists: this.http.get<ShoppingList[]>(`${this.apiUrl}/lists`),
-      categories: this.http.get<ShoppingCategory[]>(`${this.apiUrl}/categories`),
-      products: this.http.get<Product[]>(`${this.apiUrl}/products`),
+      lists: this.http.get<{lists: ShoppingList[]}>(`${this.apiUrl}/lists`),
+      categories: this.http.get<{categories: ShoppingCategory[]}>(`${this.apiUrl}/categories`),
+      products: this.http.get<{products: Product[]}>(`${this.apiUrl}/products`),
     }).pipe(
       tap(data => {
-        this.shoppingLists.set(data.lists);
-        this.shoppingCategories.set(data.categories);
-        this.products.set(data.products);
+        this.shoppingLists.set(data.lists.lists);
+        this.shoppingCategories.set(data.categories.categories);
+        this.products.set(data.products.products);
       }),
       catchError(() => {
         this.notificationService.show('Erro ao carregar dados de compras.', 'error');
@@ -94,7 +94,6 @@ export class ShoppingService {
 
   syncList(list: ShoppingList): Observable<ShoppingList> {
     const payload = {
-      list: {
         name: list.name,
         status: list.status,
         items: list.items.map(item => ({
@@ -104,7 +103,6 @@ export class ShoppingService {
           checked: item.checked,
           product_id: item.productId,
         })),
-      },
     };
 
     return this.http.put<ShoppingList>(`${this.apiUrl}/lists/${list.id}`, payload).pipe(
@@ -133,7 +131,6 @@ export class ShoppingService {
   completeActiveList(): Observable<any> {
     const list = this.activeList();
     if (!list) return of(null);
-    // Fix: Explicitly type the HTTP post request to avoid type inference issues.
     return this.http.post<object>(`${this.apiUrl}/lists/${list.id}/complete`, {}).pipe(
       tap(() => {
         this.shoppingLists.update(lists =>
@@ -155,7 +152,6 @@ export class ShoppingService {
 
   updateShoppingCategory(category: ShoppingCategory): Observable<ShoppingCategory> {
     return this.http.put<ShoppingCategory>(`${this.apiUrl}/categories/${category.id}`, category).pipe(
-      // Fix: Explicitly type the response to resolve property access errors.
       tap((updatedCategory: ShoppingCategory) => {
         this.shoppingCategories.update(c => c.map(cat => cat.id === updatedCategory.id ? updatedCategory : cat));
       })
@@ -216,13 +212,12 @@ export class ShoppingService {
     );
   }
 
-  addMultipleItems(itemsData: { productId: string, quantity: number, price: number }[]): Observable<CartItem[]> {
+  addMultipleItems(itemsData: { productId: string, quantity: number, price: number }[]): Observable<ShoppingListItem[]> {
     const activeId = this.activeListId();
     if (!activeId) return throwError(() => new Error('No active list'));
 
-    return this.http.post<CartItem[]>(`${this.apiUrl}/lists/${activeId}/items`, itemsData).pipe(
-      // Fix: Explicitly type the response to resolve property access errors.
-      tap((newItems: CartItem[]) => {
+    return this.http.post<ShoppingListItem[]>(`${this.apiUrl}/lists/${activeId}/items`, itemsData).pipe(
+      tap((newItems: ShoppingListItem[]) => {
         this.shoppingLists.update(lists => lists.map(l => {
           if (l.id === activeId) {
             return { ...l, items: [...l.items, ...newItems] };

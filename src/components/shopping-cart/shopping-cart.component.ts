@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, output, signal, computed, inject, e
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ShoppingService } from '../../services/shopping.service';
-import { CartItem, Product, ShoppingList } from '../../models/shopping.model';
+import { ShoppingListItem, Product, ShoppingList } from '../../models/shopping.model';
 import { CurrencyMaskDirective } from '../../directives/currency-mask.directive';
 import { NotificationService } from '../../services/notification.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -55,7 +55,7 @@ export class ShoppingCartComponent {
   groupedItems = computed(() => {
     const items = this.items();
     const categories = this.shoppingService.shoppingCategories();
-    const grouped: { categoryName: string; items: CartItem[] }[] = categories.map(category => ({
+    const grouped: { categoryName: string; items: ShoppingListItem[] }[] = categories.map(category => ({
       categoryName: category.name,
       items: items.filter(item => item.categoryId === category.id).sort((a,b) => a.name.localeCompare(b.name)),
     })).filter(g => g.items.length > 0);
@@ -118,7 +118,7 @@ export class ShoppingCartComponent {
     
     this.localList.update(list => {
       if (!list) return null;
-      const newItems: CartItem[] = selectedIds.map(productId => {
+      const newItems: ShoppingListItem[] = selectedIds.map(productId => {
         const product = this.shoppingService.products().find(p => p.id === productId);
         if (!product) return null;
         return {
@@ -131,7 +131,7 @@ export class ShoppingCartComponent {
           categoryId: product.categoryId,
           unit: product.unit
         };
-      }).filter((item) => item !== null);
+      }).filter((item): item is ShoppingListItem => item !== null);
 
       return {
         ...list,
@@ -170,7 +170,7 @@ export class ShoppingCartComponent {
     });
   }
 
-  toggleCheck(item: CartItem): void {
+  toggleCheck(item: ShoppingListItem): void {
     this.updateItem(item.id, 'checked', !item.checked);
   }
   
@@ -183,5 +183,5 @@ export class ShoppingCartComponent {
     }
   }
   
-  trackById(index: number, item: CartItem | Product): string { return item.id; }
+  trackById(index: number, item: ShoppingListItem | Product): string { return item.id; }
 }

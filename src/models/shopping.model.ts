@@ -27,22 +27,26 @@ export interface Product {
   updatedAt?: string;
 }
 
-export interface CartItem {
+export interface ShoppingListItem {
   id: string;
   productId: string;
+  shoppingListId?: string;
   name: string; // Denormalized for easier display
   quantity: number;
   price: number;
   checked: boolean;
   categoryId?: string; // Denormalized for easier grouping
   unit: ProductUnit; // Denormalized for easier display
+  userId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ShoppingList {
   id: string;
   name: string;
   createdAt: string; // YYYY-MM-DD
-  items: CartItem[];
+  items: ShoppingListItem[];
   status: 'pending' | 'completed';
   completedAt?: string; // YYYY-MM-DD
   totalAmount?: number;

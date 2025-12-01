@@ -49,7 +49,7 @@ export class MainLayoutComponent {
 
     const saveOperation$ = isEditing
       ? this.dataService.updateTransaction(transaction)
-      : this.dataService.addTransaction(newTransactionData);
+      : this.dataService.addTransaction(newTransactionData as Transaction);
 
     saveOperation$.pipe(
       finalize(() => this.isSaving.set(false))

@@ -26,6 +26,25 @@ export class InstallmentsComponent {
     return plans.filter(p => p.status === filter);
   });
 
+  getCategoryName(categoryId: string): string {
+    return this.dataService.getCategoryById(categoryId)?.name ?? 'Sem Categoria';
+  }
+
+  getPaidAmount(plan: InstallmentPlan): number {
+    return plan.paidInstallments * plan.installmentAmount;
+  }
+
+  getPendingAmount(plan: InstallmentPlan): number {
+    return plan.remainingInstallments * plan.installmentAmount;
+  }
+  
+  getEndDate(plan: InstallmentPlan): Date {
+    const startDate = new Date(plan.startDate);
+    const date = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+    date.setMonth(date.getMonth() + plan.totalInstallments -1);
+    return date;
+  }
+
   setFilter(status: FilterStatus): void {
     this.filterStatus.set(status);
   }

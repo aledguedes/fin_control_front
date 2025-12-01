@@ -127,7 +127,8 @@ export class ShoppingHomeComponent implements OnInit {
         type: 'expense',
         amount: this.shoppingService.total(),
         description: `Compras: ${activeList.name}`,
-        date: new Date().toISOString().split('T')[0],
+        // FIX: Renamed 'date' to 'transactionDate' to match the Transaction model.
+        transactionDate: new Date().toISOString().split('T')[0],
         paymentMethod: 'Débito',
       };
       this.uiService.openTransactionModal(purchaseDetails);
@@ -231,8 +232,10 @@ export class ShoppingHomeComponent implements OnInit {
   
   saveProduct(): void {
     if (this.editProductForm.invalid) return;
-    this.loadingAction.set(`save-product-${this.editProductForm.value.id}`);
-    this.shoppingService.updateProduct(this.editProductForm.value).pipe(
+    // FIX: Use `getRawValue()` which is correctly typed, instead of `value` which can be inferred as `unknown`.
+    const product = this.editProductForm.getRawValue();
+    this.loadingAction.set(`save-product-${product.id}`);
+    this.shoppingService.updateProduct(product as Product).pipe(
       finalize(() => {
         this.loadingAction.set(null);
         this.cancelEditProduct();

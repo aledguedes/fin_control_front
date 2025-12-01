@@ -1,4 +1,4 @@
-export interface Category {
+export interface FinancialCategory {
   id: string;
   name: string;
   type: 'revenue' | 'expense';
@@ -19,7 +19,7 @@ export interface Transaction {
   id: string;
   type: 'revenue' | 'expense';
   amount: number; // Total amount for installments
-  date: string; // YYYY-MM-DD
+  transactionDate: string; // YYYY-MM-DD
   description: string;
   categoryId: string;
   paymentMethod: PaymentMethod;
@@ -30,6 +30,9 @@ export interface Transaction {
   createdAt?: string;
   updatedAt?: string;
   recurrenceStartDate?: string;
+  totalInstallments?: number;
+  startDate?: string;
+  paidInstallments?: number;
 }
 
 // This is a derived model, not stored directly. Represents one installment payment.
@@ -41,32 +44,44 @@ export interface InstallmentEntry {
   amount: number;
   status: 'paid' | 'pending';
   description: string;
-  category: Category;
+  category: FinancialCategory;
   paymentMethod: PaymentMethod;
 }
 
-// This is a derived model for the installments dashboard
+// This is a derived model for the installments dashboard, aligned with API
 export interface InstallmentPlan {
     id: string;
     description: string;
-    paymentMethod: PaymentMethod;
     totalAmount: number;
-    startDate: string;
-    endDate: string;
+    installmentAmount: number;
     totalInstallments: number;
     paidInstallments: number;
-    pendingInstallments: number;
-    paidAmount: number;
-    pendingAmount: number;
-    status: 'ativo' | 'concluído' | 'atrasado';
-    category: Category;
+    remainingInstallments: number;
+    startDate: string; // YYYY-MM-DD
+    status: 'ativo' | 'atrasado' | 'concluído';
+    type: 'revenue' | 'expense';
+    categoryId: string;
 }
 
-// Fix: Add MonthlyView interface to be exported as a model
+export interface MonthlyTransaction {
+  id: string;
+  parentId?: string;
+  description: string;
+  amount: number;
+  type: 'revenue' | 'expense';
+  date: string; // YYYY-MM-DD
+  categoryId: string;
+  isInstallment?: boolean;
+  isRecurrent?: boolean;
+  installmentNumber?: number;
+  totalInstallments?: number;
+  paymentMethod?: PaymentMethod;
+}
+
 export interface MonthlyView {
   year: number;
   month: number;
-  transactions: Transaction[];
+  transactions: MonthlyTransaction[];
   summary: {
     totalRevenue: number;
     totalExpense: number;
