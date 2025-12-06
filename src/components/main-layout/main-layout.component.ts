@@ -1,44 +1,29 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet, RouterLink, NavigationEnd, IsActiveMatchOptions } from '@angular/router';
+import { Router, RouterOutlet, RouterLink } from '@angular/router';
 import { TransactionFormComponent } from '../transaction-form/transaction-form.component';
+import { HeaderComponent } from '../header/header.component';
 import { DataService } from '../../services/data.service';
 import { Transaction } from '../../models/transaction.model';
-import { AuthService } from '../../services/auth.service';
 import { UiService } from '../../services/ui.service';
-import { filter, finalize } from 'rxjs';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, TransactionFormComponent],
+  imports: [CommonModule, RouterOutlet, TransactionFormComponent, HeaderComponent],
   templateUrl: './main-layout.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainLayoutComponent {
   private dataService = inject(DataService);
-  private authService = inject(AuthService);
   private router = inject(Router);
   uiService = inject(UiService);
   
   isSaving = signal(false);
 
-  readonly routerLinkActiveOptions: IsActiveMatchOptions = {
-    paths: 'exact',
-    queryParams: 'exact',
-    fragment: 'ignored',
-    matrixParams: 'ignored'
-  };
+  // Logic moved to HeaderComponent
 
-  isDashboardActive = signal(this.router.isActive('/dashboard', this.routerLinkActiveOptions));
-
-  constructor() {
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
-        this.isDashboardActive.set(this.router.isActive('/dashboard', this.routerLinkActiveOptions));
-    });
-  }
 
   handleSaveTransaction(transaction: Transaction): void {
     this.isSaving.set(true);
@@ -67,9 +52,5 @@ export class MainLayoutComponent {
       },
     });
   }
-  
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
+
 }
