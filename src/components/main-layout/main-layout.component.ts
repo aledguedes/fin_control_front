@@ -45,7 +45,7 @@ export class MainLayoutComponent {
         this.dataService.refreshInstallmentPlans().subscribe();
         this.uiService.closeTransactionModal();
         
-        if (!isEditing && transaction.isInstallment) {
+        if (!isEditing && transaction.is_installment) {
           this.router.navigate(['/financial']);
           this.dataService.triggerInstallmentsNavigation();
         }

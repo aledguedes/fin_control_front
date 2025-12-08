@@ -115,13 +115,13 @@ export class ShoppingService {
             user_id: rawList.user_id,
             updated_at: rawList.updated_at,
             items: (rawList.items || []).map((item: any) => {
-              // Try to find categoryId from the item itself, or lookup in loaded products
-              let categoryId = item.category_id ? String(item.category_id) : undefined;
+              // Try to find category_id from the item itself, or lookup in loaded products
+              let category_id = item.category_id ? String(item.category_id) : undefined;
               
-              if (!categoryId && item.product_id) {
+              if (!category_id && item.product_id) {
                   const product = this.products().find(p => String(p.id) === String(item.product_id));
                   if (product && product.category_id) {
-                      categoryId = String(product.category_id);
+                      category_id = String(product.category_id);
                   }
               }
 
@@ -133,7 +133,7 @@ export class ShoppingService {
                 productId: String(item.product_id),
                 shoppingListId: String(item.shopping_list_id),
                 name: item.product_name, // Denormalized name
-                categoryId: categoryId,
+                category_id: category_id,
                 unit: 'un', // Defaulting as API sample didn't show unit
                 createdAt: item.created_at,
                 updatedAt: item.updated_at

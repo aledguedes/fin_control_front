@@ -35,7 +35,7 @@ export interface ShoppingListItem {
   quantity: number;
   price: number;
   checked: boolean;
-  categoryId?: string; // Denormalized for easier grouping
+  category_id?: string; // Denormalized for easier grouping
   unit: ProductUnit; // Denormalized for easier display
   userId?: string;
   createdAt?: string;

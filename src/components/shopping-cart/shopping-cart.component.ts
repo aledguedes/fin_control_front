@@ -78,10 +78,10 @@ export class ShoppingCartComponent {
     
     const grouped: { categoryName: string; items: ShoppingListItem[] }[] = categories.map(category => ({
       categoryName: category.name,
-      items: items.filter(item => String(item.categoryId) === String(category.id)).sort((a,b) => a.name.localeCompare(b.name)),
+      items: items.filter(item => String(item.category_id) === String(category.id)).sort((a,b) => a.name.localeCompare(b.name)),
     })).filter(g => g.items.length > 0);
 
-    const uncategorizedItems = items.filter(item => !item.categoryId || !categories.some(c => String(c.id) === String(item.categoryId)));
+    const uncategorizedItems = items.filter(item => !item.category_id || !categories.some(c => String(c.id) === String(item.category_id)));
     if (uncategorizedItems.length > 0) {
       grouped.push({ categoryName: 'Sem Categoria', items: uncategorizedItems.sort((a,b) => a.name.localeCompare(b.name)) });
     }
@@ -149,7 +149,7 @@ export class ShoppingCartComponent {
           quantity: 1,
           price: 0,
           checked: false,
-          categoryId: product.category_id,
+          category_id: product.category_id,
           unit: product.unit
         };
       }).filter(item => item !== null);

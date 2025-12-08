@@ -22,9 +22,9 @@ export class ShoppingHomeComponent implements OnInit {
   productUnits = productUnits;
   view = signal<'dashboard' | 'categories' | 'products'>('dashboard');
   isCreateListModalOpen = signal(false);
-  editingCategoryId = signal<string | null>(null);
+  editingcategory_id = signal<string | null>(null);
   editingProductId = signal<string | null>(null);
-  expandedCategoryIds = signal<string[]>([]);
+  expandedcategory_ids = signal<string[]>([]);
   preSelectedProductIds = signal<string[]>([]);
   
   // Loading states
@@ -61,14 +61,14 @@ export class ShoppingHomeComponent implements OnInit {
     this.categoryForm = this.fb.group({ name: ['', Validators.required] });
     this.productForm = this.fb.group({
       name: ['', Validators.required],
-      categoryId: [null],
+      category_id: [null],
       unit: ['un' as ProductUnit, Validators.required],
     });
     this.editCategoryForm = this.fb.group({ name: ['', Validators.required] });
     this.editProductForm = this.fb.group({
       id: [''],
       name: ['', Validators.required],
-      categoryId: [null],
+      category_id: [null],
       unit: ['un' as ProductUnit, Validators.required],
     });
   }
@@ -99,16 +99,16 @@ export class ShoppingHomeComponent implements OnInit {
     return this.preSelectedProductIds().includes(productId);
   }
 
-  isCategoryExpanded(categoryId: string): boolean {
-    return this.expandedCategoryIds().includes(categoryId);
+  isCategoryExpanded(category_id: string): boolean {
+    return this.expandedcategory_ids().includes(category_id);
   }
 
-  toggleCategory(categoryId: string): void {
-    this.expandedCategoryIds.update(ids => {
-      if (ids.includes(categoryId)) {
-        return ids.filter(id => id !== categoryId);
+  toggleCategory(category_id: string): void {
+    this.expandedcategory_ids.update(ids => {
+      if (ids.includes(category_id)) {
+        return ids.filter(id => id !== category_id);
       } else {
-        return [...ids, categoryId];
+        return [...ids, category_id];
       }
     });
   }
@@ -175,10 +175,10 @@ export class ShoppingHomeComponent implements OnInit {
   }
 
   startEditCategory(category: ShoppingCategory): void {
-    this.editingCategoryId.set(category.id);
+    this.editingcategory_id.set(category.id);
     this.editCategoryForm.setValue({ name: category.name });
   }
-  cancelEditCategory(): void { this.editingCategoryId.set(null); }
+  cancelEditCategory(): void { this.editingcategory_id.set(null); }
 
   saveCategory(id: string): void {
     if (this.editCategoryForm.invalid) return;
@@ -196,7 +196,7 @@ export class ShoppingHomeComponent implements OnInit {
     this.loadingAction.set('add-product');
     this.shoppingService.addProduct(this.productForm.value).pipe(
       finalize(() => this.loadingAction.set(null))
-    ).subscribe(() => this.productForm.reset({ unit: 'un', categoryId: null }));
+    ).subscribe(() => this.productForm.reset({ unit: 'un', category_id: null }));
   }
   
   deleteProduct(id: string): void {
@@ -213,7 +213,7 @@ export class ShoppingHomeComponent implements OnInit {
     this.editProductForm.setValue({
       id: product.id,
       name: product.name,
-      categoryId: product.category_id ?? null,
+      category_id: product.category_id ?? null,
       unit: product.unit
     });
   }

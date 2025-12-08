@@ -26,8 +26,8 @@ export class InstallmentsComponent {
     return plans.filter(p => p.status === filter);
   });
 
-  getCategoryName(categoryId: string): string {
-    return this.dataService.getCategoryById(categoryId)?.name ?? 'Sem Categoria';
+  getCategoryName(category_id: string): string {
+    return this.dataService.getCategoryById(category_id)?.name ?? 'Sem Categoria';
   }
 
   getPaidAmount(plan: InstallmentPlan): number {
