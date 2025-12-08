@@ -59,16 +59,16 @@
                         <p class="font-semibold text-neutral-800">{{list.name}}</p>
                         <p class="text-sm text-neutral-500">
                           @if(list.status === 'completed') {
-                            Finalizada em: {{ list.completedAt | date:'dd/MM/yyyy' }}
+                            Finalizada em: {{ list.completed_at | date:'dd/MM/yyyy' }}
                           } @else {
-                            Criada em: {{ list.createdAt | date:'dd/MM/yyyy' }}
+                            Criada em: {{ list.created_at | date:'dd/MM/yyyy' }}
                           }
                         </p>
                       </div>
                       <div class="flex items-center gap-4 w-full sm:w-auto">
                         @if(list.status === 'completed') {
                           <span class="text-xs font-semibold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full whitespace-nowrap">Finalizada</span>
-                          <p class="font-bold text-neutral-700 flex-grow text-right">R$ {{ list.totalAmount | number:'1.2-2':'pt' }}</p>
+                          <p class="font-bold text-neutral-700 flex-grow text-right">R$ {{ list.total_amount | number:'1.2-2':'pt' }}</p>
                         } @else {
                           <span class="text-xs font-semibold bg-blue-100 text-blue-800 px-3 py-1 rounded-full whitespace-nowrap">Pendente</span>
                         }

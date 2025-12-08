@@ -120,16 +120,7 @@ export class ShoppingHomeComponent implements OnInit {
     ).subscribe(() => {
       // ONLY remove draft if API call succeeds
       localStorage.removeItem(`shopping_list_draft_${list.id}`);
-
-      const purchaseDetails: Partial<Transaction> = {
-        type: 'expense',
-        amount: list.items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-        description: `Compras: ${list.name}`, 
-        // FIX: Renamed 'date' to 'transactionDate' to match the Transaction model.
-        transactionDate: new Date().toISOString().split('T')[0],
-        paymentMethod: 'Débito',
-      };
-      this.uiService.openTransactionModal(purchaseDetails);
+      // Redirect is handled by service setting activeList to null
     });
   }
   
