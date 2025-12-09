@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, computed, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, signal, inject, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataService } from '../../services/data.service';
 import { InstallmentPlan } from '../../models/transaction.model';
@@ -13,6 +13,7 @@ type FilterStatus = 'todos' | 'ativo' | 'atrasado' | 'concluído';
 })
 export class InstallmentsComponent {
   dataService = inject(DataService);
+  close = output<void>();
   
   filterStatus = signal<FilterStatus>('ativo');
   
@@ -26,8 +27,8 @@ export class InstallmentsComponent {
     return plans.filter(p => p.status === filter);
   });
 
-  getCategoryName(categoryId: string): string {
-    return this.dataService.getCategoryById(categoryId)?.name ?? 'Sem Categoria';
+  getCategoryName(category_id: string): string {
+    return this.dataService.getCategoryById(category_id)?.name ?? 'Sem Categoria';
   }
 
   getPaidAmount(plan: InstallmentPlan): number {
@@ -39,8 +40,8 @@ export class InstallmentsComponent {
   }
   
   getEndDate(plan: InstallmentPlan): Date {
-    const startDate = new Date(plan.startDate);
-    const date = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+    const start_date = new Date(plan.startDate);
+    const date = new Date(start_date.getFullYear(), start_date.getMonth(), start_date.getDate());
     date.setMonth(date.getMonth() + plan.totalInstallments -1);
     return date;
   }

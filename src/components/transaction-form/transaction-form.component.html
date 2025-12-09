@@ -21,7 +21,7 @@
           </div>
           
           <!-- Amount -->
-          @if (!transactionForm.value.isInstallment) {
+          @if (!transactionForm.value.is_installment) {
             <div>
               <label for="amount" class="block text-sm font-medium text-neutral-700">Valor Total</label>
               <div class="relative mt-1 rounded-md shadow-sm">
@@ -37,7 +37,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div [class.sm:col-span-2]="transactionForm.value.type === 'revenue'">
               <label for="category" class="block text-sm font-medium text-neutral-700">Categoria</label>
-              <select id="category" formControlName="categoryId" class="mt-1 block w-full rounded-md border-2 border-neutral-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 text-base">
+              <select id="category" formControlName="category_id" class="mt-1 block w-full rounded-md border-2 border-neutral-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 text-base">
                 <option [ngValue]="null" disabled>Selecione...</option>
                 @for(category of dataService.allCategories(); track category.id) {
                   @if(category.type === transactionForm.value.type) {
@@ -48,9 +48,9 @@
             </div>
             @if (transactionForm.value.type === 'expense') {
               <div>
-                <label for="paymentMethod" class="block text-sm font-medium text-neutral-700">Forma de Pagamento</label>
-                <select id="paymentMethod" formControlName="paymentMethod" class="mt-1 block w-full rounded-md border-2 border-neutral-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 text-base">
-                  @for(method of paymentMethods; track method) {
+                <label for="payment_method" class="block text-sm font-medium text-neutral-700">Forma de Pagamento</label>
+                <select id="payment_method" formControlName="payment_method" class="mt-1 block w-full rounded-md border-2 border-neutral-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 text-base">
+                  @for(method of payment_methods; track method) {
                     <option [value]="method">{{ method }}</option>
                   }
                 </select>
@@ -61,25 +61,34 @@
           <!-- Date -->
           <div>
             <label for="date" class="block text-sm font-medium text-neutral-700">{{ transactionForm.value.type === 'revenue' ? 'Data do Recebimento' : 'Data da Compra' }}</label>
-            <input type="date" id="date" formControlName="transactionDate" class="mt-1 block w-full rounded-md border-2 border-neutral-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 text-base">
+            <input type="date" id="date" formControlName="transaction_date" class="mt-1 block w-full rounded-md border-2 border-neutral-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 text-base">
           </div>
 
           <!-- Expense Options Toggles -->
           @if (transactionForm.value.type === 'expense') {
             <div class="space-y-3">
                 <div class="flex items-center">
-                    <input id="isInstallment" formControlName="isInstallment" type="checkbox" [disabled]="transactionForm.value.isRecurrent" class="h-5 w-5 rounded border-2 border-neutral-300 text-indigo-600 focus:ring-indigo-500 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
-                    <label for="isInstallment" class="ml-3 block text-base" [class.text-neutral-500]="transactionForm.value.isRecurrent">Esta despesa é parcelada?</label>
+                    <input id="is_installment" formControlName="is_installment" type="checkbox" [disabled]="transactionForm.value.is_recurrent" class="h-5 w-5 rounded border-2 border-neutral-300 text-indigo-600 focus:ring-indigo-500 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
+                    <label for="is_installment" class="ml-3 block text-base" [class.text-neutral-500]="transactionForm.value.is_recurrent">Esta despesa é parcelada?</label>
                 </div>
                 <div class="flex items-center">
-                    <input id="isRecurrent" formControlName="isRecurrent" type="checkbox" [disabled]="transactionForm.value.isInstallment" class="h-5 w-5 rounded border-2 border-neutral-300 text-indigo-600 focus:ring-indigo-500 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
-                    <label for="isRecurrent" class="ml-3 block text-base" [class.text-neutral-500]="transactionForm.value.isInstallment">Esta despesa é recorrente?</label>
+                    <input id="is_recurrent" formControlName="is_recurrent" type="checkbox" [disabled]="transactionForm.value.is_installment" class="h-5 w-5 rounded border-2 border-neutral-300 text-indigo-600 focus:ring-indigo-500 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
+                    <label for="is_recurrent" class="ml-3 block text-base" [class.text-neutral-500]="transactionForm.value.is_installment">Esta despesa é recorrente?</label>
                 </div>
             </div>
           }
+          
+          <!-- Recurrence Details -->
+          @if (transactionForm.value.is_recurrent) {
+             <div class="border-t pt-4 animate-fade-in-down">
+                <label for="recurrence_start_date" class="block text-sm font-medium text-neutral-700">Início da Recorrência</label>
+                <input type="date" id="recurrence_start_date" formControlName="recurrence_start_date" class="mt-1 block w-full rounded-md border-2 border-neutral-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 text-base">
+                 <p class="mt-1 text-xs text-neutral-500">A partir desta data, esta despesa se repetirá mensalmente.</p>
+             </div>
+          }
 
           <!-- Installments Details -->
-          @if (transactionForm.value.isInstallment) {
+          @if (transactionForm.value.is_installment) {
             <div class="space-y-4 border-t pt-4" formGroupName="installments">
                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
@@ -90,8 +99,8 @@
                     </div>
                   </div>
                   <div>
-                    <label for="totalInstallments" class="block text-sm font-medium text-neutral-700">Nº de Parcelas</label>
-                    <input type="number" id="totalInstallments" formControlName="totalInstallments" min="2" class="mt-1 block w-full rounded-md border-2 border-neutral-300 shadow-sm py-2 px-3">
+                    <label for="total_installments" class="block text-sm font-medium text-neutral-700">Nº de Parcelas</label>
+                    <input type="number" id="total_installments" formControlName="total_installments" min="2" class="mt-1 block w-full rounded-md border-2 border-neutral-300 shadow-sm py-2 px-3">
                   </div>
                </div>
                 <div>
@@ -102,8 +111,8 @@
                     </div>
                 </div>
                 <div>
-                    <label for="startDate" class="block text-sm font-medium text-neutral-700">Início do Pagamento</label>
-                    <input type="date" id="startDate" formControlName="startDate" class="mt-1 block w-full rounded-md border-2 border-neutral-300 shadow-sm py-2 px-3">
+                    <label for="start_date" class="block text-sm font-medium text-neutral-700">Início do Pagamento</label>
+                    <input type="date" id="start_date" formControlName="start_date" class="mt-1 block w-full rounded-md border-2 border-neutral-300 shadow-sm py-2 px-3">
                 </div>
             </div>
           }

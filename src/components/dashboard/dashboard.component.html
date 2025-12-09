@@ -93,7 +93,7 @@
                   }
                 <div class="min-w-0">
                   <p class="font-semibold text-neutral-800 truncate">{{ transaction.description }}</p>
-                  <p class="text-sm text-neutral-500 truncate">{{ getCategoryName(transaction.categoryId) }} &middot; {{ transaction.date | date:'dd/MM/y':'':'pt' }}</p>
+                  <p class="text-sm text-neutral-500 truncate">{{ getCategoryName(transaction.category_id) }} &middot; {{ transaction.date | date:'dd/MM/y':'':'pt' }}</p>
                 </div>
               </div>
               <div class="flex items-center ml-4 flex-shrink-0">
@@ -101,7 +101,7 @@
                   <p class="font-bold" [class.text-emerald-600]="transaction.type === 'revenue'" [class.text-red-600]="transaction.type === 'expense'">
                     {{ transaction.type === 'revenue' ? '+' : '-' }} {{ transaction.amount | number:'1.2-2':'pt' }}
                   </p>
-                  <p class="text-xs text-neutral-500">{{ transaction.paymentMethod }}</p>
+                  <p class="text-xs text-neutral-500">{{ transaction.payment_method }}</p>
                 </div>
                 <div class="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <button (click)="onEdit(transaction)" [disabled]="deletingId() === transaction.id" class="p-2 rounded-full text-neutral-500 hover:bg-indigo-100 hover:text-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">

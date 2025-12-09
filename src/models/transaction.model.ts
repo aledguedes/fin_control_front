@@ -7,45 +7,45 @@ export interface FinancialCategory {
   updatedAt?: string;
 }
 
-export type PaymentMethod = 'Dinheiro' | 'Débito' | 'Crédito' | 'Carnê' | 'Boleto' | 'Transferência' | 'Financiamento' | 'Empréstimo';
+export type payment_method = 'Dinheiro' | 'Débito' | 'Crédito' | 'Carnê' | 'Boleto' | 'Transferência' | 'Financiamento' | 'Empréstimo';
 
 export interface InstallmentDetails {
-  totalInstallments: number;
-  paidInstallments: number;
-  startDate: string; // YYYY-MM-DD
+  total_installments: number;
+  paid_installments: number;
+  start_date: string; // YYYY-MM-DD
 }
 
 export interface Transaction {
   id: string;
   type: 'revenue' | 'expense';
   amount: number; // Total amount for installments
-  transactionDate: string; // YYYY-MM-DD
+  transaction_date: string; // YYYY-MM-DD
   description: string;
-  categoryId: string;
-  paymentMethod: PaymentMethod;
-  isInstallment: boolean;
-  isRecurrent?: boolean;
+  category_id: string;
+  payment_method: payment_method;
+  is_installment: boolean;
+  is_recurrent?: boolean;
   installments?: InstallmentDetails;
   userId?: string;
   createdAt?: string;
   updatedAt?: string;
-  recurrenceStartDate?: string;
-  totalInstallments?: number;
-  startDate?: string;
-  paidInstallments?: number;
+  recurrence_start_date?: string;
+  total_installments?: number;
+  start_date?: string;
+  paid_installments?: number;
 }
 
 // This is a derived model, not stored directly. Represents one installment payment.
 export interface InstallmentEntry {
   parentTransactionId: string;
   installmentNumber: number;
-  totalInstallments: number;
+  total_installments: number;
   dueDate: Date;
   amount: number;
   status: 'paid' | 'pending';
   description: string;
   category: FinancialCategory;
-  paymentMethod: PaymentMethod;
+  payment_method: payment_method;
 }
 
 // This is a derived model for the installments dashboard, aligned with API
@@ -60,7 +60,7 @@ export interface InstallmentPlan {
     startDate: string; // YYYY-MM-DD
     status: 'ativo' | 'atrasado' | 'concluído';
     type: 'revenue' | 'expense';
-    categoryId: string;
+    category_id: string;
 }
 
 export interface MonthlyTransaction {
@@ -70,12 +70,12 @@ export interface MonthlyTransaction {
   amount: number;
   type: 'revenue' | 'expense';
   date: string; // YYYY-MM-DD
-  categoryId: string;
-  isInstallment?: boolean;
-  isRecurrent?: boolean;
+  category_id: string;
+  is_installment?: boolean;
+  is_recurrent?: boolean;
   installmentNumber?: number;
-  totalInstallments?: number;
-  paymentMethod?: PaymentMethod;
+  total_installments?: number;
+  payment_method?: payment_method;
 }
 
 export interface MonthlyView {

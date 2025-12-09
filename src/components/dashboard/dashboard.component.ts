@@ -48,8 +48,8 @@ export class DashboardComponent {
     this.currentDate.set(new Date(year, month - 1, 2));
   }
 
-  getCategoryName(categoryId: string): string {
-    return this.dataService.getCategoryById(categoryId)?.name ?? 'Sem Categoria';
+  getCategoryName(category_id: string): string {
+    return this.dataService.getCategoryById(category_id)?.name ?? 'Sem Categoria';
   }
 
   trackById(index: number, item: MonthlyTransaction): string {
@@ -62,12 +62,12 @@ export class DashboardComponent {
       description: monthlyTx.description,
       amount: monthlyTx.amount,
       type: monthlyTx.type,
-      transactionDate: monthlyTx.date,
-      categoryId: monthlyTx.categoryId,
-      isInstallment: monthlyTx.isInstallment ?? false,
-      isRecurrent: monthlyTx.isRecurrent ?? false,
-      paymentMethod: monthlyTx.paymentMethod,
-      totalInstallments: monthlyTx.totalInstallments,
+      transaction_date: monthlyTx.date,
+      category_id: monthlyTx.category_id,
+      is_installment: monthlyTx.is_installment ?? false,
+      is_recurrent: monthlyTx.is_recurrent ?? false,
+      payment_method: monthlyTx.payment_method,
+      total_installments: monthlyTx.total_installments,
     };
     this.uiService.openTransactionModal(transaction);
   }

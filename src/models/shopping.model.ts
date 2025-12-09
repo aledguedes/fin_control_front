@@ -20,11 +20,11 @@ export interface ShoppingCategory {
 export interface Product {
   id: string;
   name: string;
-  categoryId?: string;
+  category_id?: string;
   unit: ProductUnit;
-  userId?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  user_id?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface ShoppingListItem {
@@ -35,21 +35,25 @@ export interface ShoppingListItem {
   quantity: number;
   price: number;
   checked: boolean;
-  categoryId?: string; // Denormalized for easier grouping
+  category_id?: string; // Denormalized for easier grouping
   unit: ProductUnit; // Denormalized for easier display
   userId?: string;
   createdAt?: string;
   updatedAt?: string;
 }
 
+export interface ShoppingListResponse {
+  list: ShoppingList;
+}
+
 export interface ShoppingList {
   id: string;
   name: string;
-  createdAt: string; // YYYY-MM-DD
+  created_at: string; // YYYY-MM-DD
   items: ShoppingListItem[];
   status: 'pending' | 'completed';
-  completedAt?: string; // YYYY-MM-DD
-  totalAmount?: number;
-  userId?: string;
-  updatedAt?: string;
+  completed_at?: string; // YYYY-MM-DD
+  total_amount?: number;
+  user_id?: string;
+  updated_at?: string;
 }

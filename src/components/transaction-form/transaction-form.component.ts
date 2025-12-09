@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, input, output, effect, inject, OnIn
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DataService } from '../../services/data.service';
-import { Transaction, PaymentMethod } from '../../models/transaction.model';
+import { Transaction, payment_method } from '../../models/transaction.model';
 import { CurrencyMaskDirective } from '../../directives/currency-mask.directive';
 
 @Component({
@@ -22,7 +22,7 @@ export class TransactionFormComponent implements OnInit {
   
   transactionForm!: FormGroup;
 
-  paymentMethods: PaymentMethod[] = ['Dinheiro', 'Débito', 'Crédito', 'Carnê', 'Boleto', 'Transferência', 'Financiamento', 'Empréstimo'];
+  payment_methods: payment_method[] = ['Dinheiro', 'Débito', 'Crédito', 'Carnê', 'Boleto', 'Transferência', 'Financiamento', 'Empréstimo'];
 
   constructor() {
     effect(() => {
@@ -38,54 +38,70 @@ export class TransactionFormComponent implements OnInit {
   }
 
   private buildForm(data: Partial<Transaction> | null = null): void {
-    const isInstallment = data?.isInstallment ?? false;
+    const is_installment = data?.is_installment ?? false;
+    const is_recurrent = data?.is_recurrent ?? false;
     
     this.transactionForm = this.fb.group({
       id: [data?.id ?? null],
       type: [data?.type ?? 'expense', Validators.required],
       description: [data?.description ?? '', Validators.required],
-      amount: [data?.amount ?? null, !isInstallment ? Validators.required : null],
-      categoryId: [data?.categoryId ?? null, Validators.required],
-      paymentMethod: [data?.paymentMethod ?? 'Débito', Validators.required],
-      transactionDate: [data?.transactionDate ?? new Date().toISOString().split('T')[0], Validators.required],
-      isInstallment: [isInstallment],
-      isRecurrent: [data?.isRecurrent ?? false],
+      amount: [data?.amount ?? null, !is_installment ? Validators.required : null],
+      category_id: [data?.category_id ?? null, Validators.required],
+      payment_method: [data?.payment_method ?? 'Débito', Validators.required],
+      transaction_date: [data?.transaction_date ?? new Date().toISOString().split('T')[0], Validators.required],
+      is_installment: [is_installment],
+      is_recurrent: [is_recurrent],
+      recurrence_start_date: [data?.recurrence_start_date ?? null], 
       installments: this.fb.group({
-        installmentAmount: [isInstallment && data?.amount && data.installments?.totalInstallments ? parseFloat((data.amount / data.installments.totalInstallments).toFixed(2)) : null, isInstallment ? Validators.required : null],
-        totalInstallments: [data?.installments?.totalInstallments ?? 2, isInstallment ? [Validators.required, Validators.min(2)] : null],
-        startDate: [data?.installments?.startDate ?? new Date().toISOString().split('T')[0]],
-        paidInstallments: [data?.installments?.paidInstallments ?? 0]
+        installmentAmount: [is_installment && data?.amount && data.installments?.total_installments ? parseFloat((data.amount / data.installments.total_installments).toFixed(2)) : null, is_installment ? Validators.required : null],
+        total_installments: [data?.installments?.total_installments ?? 2, is_installment ? [Validators.required, Validators.min(2)] : null],
+        start_date: [data?.installments?.start_date ?? new Date().toISOString().split('T')[0]],
+        paid_installments: [data?.installments?.paid_installments ?? 0]
       })
     });
     this.setupFormListeners();
+    // Initial validation state update
+    if (is_recurrent) {
+        this.transactionForm.get('recurrence_start_date')?.setValidators([Validators.required]);
+    }
   }
 
   private setupFormListeners(): void {
     this.transactionForm.get('type')?.valueChanges.subscribe(type => {
-      this.transactionForm.get('categoryId')?.reset();
+      this.transactionForm.get('category_id')?.reset();
       if (type === 'revenue') {
-        this.transactionForm.patchValue({ isInstallment: false, isRecurrent: false, paymentMethod: 'Transferência' });
+        this.transactionForm.patchValue({ is_installment: false, is_recurrent: false, payment_method: 'Transferência' });
       } else {
-        this.transactionForm.patchValue({ paymentMethod: 'Débito' });
+        this.transactionForm.patchValue({ payment_method: 'Débito' });
       }
     });
 
-    this.transactionForm.get('isInstallment')?.valueChanges.subscribe(isInstallment => {
-      if (isInstallment) {
-        this.transactionForm.get('isRecurrent')?.setValue(false, { emitEvent: false });
+    this.transactionForm.get('is_installment')?.valueChanges.subscribe(is_installment => {
+      if (is_installment) {
+        this.transactionForm.get('is_recurrent')?.setValue(false);
       }
       this.updateInstallmentValidators();
     });
 
-    this.transactionForm.get('isRecurrent')?.valueChanges.subscribe(isRecurrent => {
-      if (isRecurrent) {
-        this.transactionForm.get('isInstallment')?.setValue(false, { emitEvent: false });
+    this.transactionForm.get('is_recurrent')?.valueChanges.subscribe(is_recurrent => {
+      const recurrenceDateControl = this.transactionForm.get('recurrence_start_date');
+      if (is_recurrent) {
+        this.transactionForm.get('is_installment')?.setValue(false);
+        recurrenceDateControl?.setValidators([Validators.required]);
+        // Set default date if empty when enabling
+        if (!recurrenceDateControl?.value) {
+            recurrenceDateControl?.setValue(new Date().toISOString().split('T')[0]);
+        }
+      } else {
+        recurrenceDateControl?.clearValidators();
+        recurrenceDateControl?.setValue(null);
       }
+      recurrenceDateControl?.updateValueAndValidity();
     });
 
     (this.transactionForm.get('installments') as FormGroup).valueChanges.subscribe(value => {
-      if (this.transactionForm.get('isInstallment')?.value) {
-        const numInstallments = value.totalInstallments ?? 0;
+      if (this.transactionForm.get('is_installment')?.value) {
+        const numInstallments = value.total_installments ?? 0;
         const installmentAmt = value.installmentAmount ?? 0;
         if (numInstallments > 0 && installmentAmt > 0) {
           const totalAmount = parseFloat((installmentAmt * numInstallments).toFixed(2));
@@ -96,23 +112,23 @@ export class TransactionFormComponent implements OnInit {
   }
 
   private updateInstallmentValidators(): void {
-    const isInstallment = this.transactionForm.get('isInstallment')?.value;
+    const is_installment = this.transactionForm.get('is_installment')?.value;
     const installmentGroup = this.transactionForm.get('installments') as FormGroup;
     const installmentAmountControl = installmentGroup.get('installmentAmount');
-    const totalInstallmentsControl = installmentGroup.get('totalInstallments');
+    const total_installmentsControl = installmentGroup.get('total_installments');
     const amountControl = this.transactionForm.get('amount');
 
-    if (isInstallment) {
+    if (is_installment) {
         installmentAmountControl?.setValidators([Validators.required, Validators.min(0.01)]);
-        totalInstallmentsControl?.setValidators([Validators.required, Validators.min(2)]);
+        total_installmentsControl?.setValidators([Validators.required, Validators.min(2)]);
         amountControl?.clearValidators();
     } else {
         installmentAmountControl?.clearValidators();
-        totalInstallmentsControl?.clearValidators();
+        total_installmentsControl?.clearValidators();
         amountControl?.setValidators([Validators.required, Validators.min(0.01)]);
     }
     installmentAmountControl?.updateValueAndValidity();
-    totalInstallmentsControl?.updateValueAndValidity();
+    total_installmentsControl?.updateValueAndValidity();
     amountControl?.updateValueAndValidity();
   }
 
@@ -127,16 +143,19 @@ export class TransactionFormComponent implements OnInit {
       id: formValue.id || undefined!,
       type: formValue.type,
       amount: formValue.amount,
-      transactionDate: formValue.transactionDate,
+      transaction_date: formValue.transaction_date,
       description: formValue.description,
-      categoryId: formValue.categoryId,
-      paymentMethod: formValue.paymentMethod,
-      isInstallment: formValue.isInstallment,
-      isRecurrent: formValue.isRecurrent,
-      installments: formValue.isInstallment ? {
-        totalInstallments: formValue.installments.totalInstallments,
-        paidInstallments: formValue.installments.paidInstallments,
-        startDate: formValue.installments.startDate
+      category_id: formValue.category_id,
+      payment_method: formValue.payment_method,
+      is_installment: formValue.is_installment,
+      is_recurrent: formValue.is_recurrent,
+      // Map recurrence_start_date to model property (assuming model uses camelCase or I can add the snake_case one)
+      recurrence_start_date: formValue.is_recurrent ? formValue.recurrence_start_date : undefined,
+      
+      installments: formValue.is_installment ? {
+        total_installments: formValue.installments.total_installments,
+        paid_installments: formValue.installments.paid_installments,
+        start_date: formValue.installments.start_date
       } : undefined
     } as Transaction;
     
