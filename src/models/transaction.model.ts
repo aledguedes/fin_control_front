@@ -54,10 +54,10 @@ export interface InstallmentPlan {
     description: string;
     totalAmount: number;
     installmentAmount: number;
-    total_installments: number;
-    paid_installments: number;
+    totalInstallments: number;
+    paidInstallments: number;
     remainingInstallments: number;
-    start_date: string; // YYYY-MM-DD
+    startDate: string; // YYYY-MM-DD
     status: 'ativo' | 'atrasado' | 'concluído';
     type: 'revenue' | 'expense';
     category_id: string;
