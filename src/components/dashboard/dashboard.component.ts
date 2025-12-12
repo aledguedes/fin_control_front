@@ -5,10 +5,8 @@ import {
   inject,
   effect,
   computed,
-  viewChild,
-  ElementRef,
+  input,
   ChangeDetectorRef,
-  HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataService } from '../../services/data.service';
@@ -27,39 +25,33 @@ export class DashboardComponent {
   private uiService = inject(UiService);
   private cdr = inject(ChangeDetectorRef);
 
-  currentDate = signal(new Date());
+  // Receive currentDate from parent component
+  currentDate = input.required<Date>();
   isLoading = signal(true);
   deletingId = signal<string | null>(null);
-  monthInput = viewChild<ElementRef<HTMLInputElement>>('monthInput');
-  showMonthPicker = signal(false);
+  showAllExpenses = signal(false);
+  showAllTransactions = signal(false);
 
-  // Month names in Portuguese (3 letters)
-  monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+  // Top expenses (sorted by amount, limited to 3)
+  topExpenses = computed(() => {
+    const view = this.dataService.currentMonthlyView();
+    if (!view) return [];
 
-  // Get available years (starting from 2025, up to 10 years ahead)
-  availableYears = computed(() => {
-    const years: number[] = [];
-    const startYear = 2025;
-    const endYear = startYear + 10; // 2025 to 2035
-    for (let i = startYear; i <= endYear; i++) {
-      years.push(i);
-    }
-    return years;
+    const expenses = view.transactions.filter((t) => t.type === 'expense');
+    const sorted = expenses.sort((a, b) => b.amount - a.amount);
+    return this.showAllExpenses() ? sorted : sorted.slice(0, 3);
   });
 
-  // Get current month and year
-  currentMonth = computed(() => this.currentDate().getMonth());
-  currentYear = computed(() => this.currentDate().getFullYear());
+  // Displayed transactions (limited or all)
+  displayedTransactions = computed(() => {
+    const view = this.dataService.currentMonthlyView();
+    if (!view) return [];
 
-  // Computed signal to format the date for the <input type="month">
-  monthYearValue = computed(() => {
-    const date = this.currentDate();
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    return `${year}-${month}`;
+    return this.showAllTransactions() ? view.transactions : view.transactions.slice(0, 5);
   });
 
   constructor() {
+    // Fetch monthly view when date changes
     effect(
       () => {
         this.isLoading.set(true);
@@ -74,65 +66,35 @@ export class DashboardComponent {
     );
   }
 
-  // Handles the change event from the <input type="month">
-  onDateChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (!input.value) return;
-    const [year, month] = input.value.split('-').map(Number);
-    // Set the day to the 2nd to avoid timezone issues that could push it back a day to the previous month.
-    this.currentDate.set(new Date(year, month - 1, 2));
-  }
-
-  // Navigate to previous or next month
-  navigateMonth(direction: number): void {
-    if (this.isLoading()) return;
-    const current = this.currentDate();
-    const newDate = new Date(current.getFullYear(), current.getMonth() + direction, 2);
-    this.currentDate.set(newDate);
-    this.cdr.markForCheck();
-  }
-
-  // Toggle custom month picker dropdown
-  toggleMonthPicker(): void {
-    if (this.isLoading()) return;
-    this.showMonthPicker.update((value) => !value);
-  }
-
-  // Select month from custom picker
-  selectMonth(monthIndex: number): void {
-    const newDate = new Date(this.currentYear(), monthIndex, 2);
-    this.currentDate.set(newDate);
-    this.showMonthPicker.set(false);
-    this.cdr.markForCheck();
-  }
-
-  // Select year from custom picker
-  selectYear(year: number): void {
-    const newDate = new Date(year, this.currentMonth(), 2);
-    this.currentDate.set(newDate);
-    this.showMonthPicker.set(false);
-    this.cdr.markForCheck();
-  }
-
-  // Close picker when clicking outside (handled in template)
-  closeMonthPicker(): void {
-    this.showMonthPicker.set(false);
-  }
-
-  // Close picker on Escape key
-  @HostListener('document:keydown.escape', ['$event'])
-  handleEscapeKey(event: KeyboardEvent): void {
-    if (this.showMonthPicker()) {
-      this.closeMonthPicker();
-    }
-  }
-
   getCategoryName(category_id: string): string {
     return this.dataService.getCategoryById(category_id)?.name ?? 'Sem Categoria';
   }
 
+  getCategoryIcon(category_id: string): string {
+    const category = this.dataService.getCategoryById(category_id);
+    // Simple icon mapping based on category name
+    if (!category)
+      return 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H7a3 3 0 00-3 3v8a3 3 0 003 3z';
+
+    const name = category.name.toLowerCase();
+    if (name.includes('compra') || name.includes('roupa')) {
+      return 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z'; // Shopping bag
+    } else if (name.includes('lazer') || name.includes('entretenimento')) {
+      return 'M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z'; // Entertainment
+    }
+    return 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H7a3 3 0 00-3 3v8a3 3 0 003 3z'; // Default card icon
+  }
+
   trackById(index: number, item: MonthlyTransaction): string {
     return item.id;
+  }
+
+  toggleShowAllExpenses(): void {
+    this.showAllExpenses.update((v) => !v);
+  }
+
+  toggleShowAllTransactions(): void {
+    this.showAllTransactions.update((v) => !v);
   }
 
   onEdit(monthlyTx: MonthlyTransaction) {

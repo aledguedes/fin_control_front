@@ -1,95 +1,47 @@
 <div class="space-y-6">
   @switch (activeView()) {
     @case ('dashboard') {
-      <div class="space-y-6">
+      <div class="space-y-5">
         <!-- Header Section -->
-        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-800">Relatório Mensal Analítico</h1>
-            <p class="text-sm text-gray-600 mt-1">
-              Visão detalhada de suas finanças e tendências de gastos.
-            </p>
-          </div>
-          <button
-            (click)="onNewTransaction()"
-            class="w-full sm:w-auto flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 px-5 rounded-lg shadow-md transition-all transform hover:scale-105"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 mr-2"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+        <div class="bg-white rounded-xl shadow-sm p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="flex-1">
+              <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">
+                Relatório Mensal Analítico
+              </h1>
+              <p class="text-sm text-gray-500 mt-1.5">
+                Visão detalhada de suas finanças e tendências de gastos
+              </p>
+            </div>
+            <button
+              (click)="onNewTransaction()"
+              class="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2.5 px-6 rounded-lg shadow-sm transition-all hover:shadow-md active:scale-95"
             >
-              <path
-                fill-rule="evenodd"
-                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            Novo Lançamento
-          </button>
-        </div>
-
-        <!-- Navigation Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button
-            (click)="setView('installments')"
-            class="text-left p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 flex items-center gap-4"
-          >
-            <div class="bg-indigo-100 p-4 rounded-lg flex-shrink-0">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-8 w-8 text-indigo-600"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-                <path
-                  fill-rule="evenodd"
-                  d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </div>
-            <div class="flex-1 min-w-0">
-              <span class="font-bold text-lg text-gray-800 block">Parcelamentos</span>
-              <p class="text-sm text-gray-600 mt-1">Acompanhe suas compras parceladas.</p>
-            </div>
-          </button>
-          <button
-            (click)="setView('categories')"
-            class="text-left p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 flex items-center gap-4"
-          >
-            <div class="bg-indigo-100 p-4 rounded-lg flex-shrink-0">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-8 w-8 text-indigo-600"
+                class="h-5 w-5"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
                 <path
                   fill-rule="evenodd"
-                  d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a1 1 0 011-1h5a1 1 0 01.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z"
+                  d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
                   clip-rule="evenodd"
                 />
               </svg>
-            </div>
-            <div class="flex-1 min-w-0">
-              <span class="font-bold text-lg text-gray-800 block">Categorias</span>
-              <p class="text-sm text-gray-600 mt-1">Organize suas transações.</p>
-            </div>
-          </button>
+              Novo Lançamento
+            </button>
+          </div>
         </div>
 
         <!-- Month Selector -->
-        <div class="bg-white p-3 rounded-lg shadow-md">
+        <div class="bg-white rounded-xl shadow-sm p-4">
           <div class="flex items-center justify-between gap-3">
             <!-- Previous Month Button -->
             <button
               type="button"
               (click)="navigateMonth(-1)"
-              [disabled]="isLoading()"
-              class="flex items-center justify-center w-10 h-10 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              class="flex items-center justify-center w-11 h-11 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-700 hover:text-indigo-600 transition-all active:scale-95"
               aria-label="Mês anterior"
             >
               <svg
@@ -98,7 +50,7 @@
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                stroke-width="2"
+                stroke-width="2.5"
               >
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
@@ -109,8 +61,7 @@
               <button
                 type="button"
                 (click)="toggleMonthPicker()"
-                [disabled]="isLoading()"
-                class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-2 border-indigo-200 hover:border-indigo-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                class="w-full flex items-center justify-center gap-2.5 px-4 py-3 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-2 border-indigo-200 hover:border-indigo-300 transition-all active:scale-98"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -124,7 +75,7 @@
                     clip-rule="evenodd"
                   />
                 </svg>
-                <span class="text-lg font-semibold text-indigo-800 uppercase tracking-wide">
+                <span class="text-base font-semibold text-indigo-900 uppercase tracking-wide">
                   {{ currentDate() | date: 'LLLL y' : '' : 'pt' }}
                 </span>
                 <svg
@@ -134,7 +85,7 @@
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
-                  stroke-width="2"
+                  stroke-width="2.5"
                 >
                   <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
@@ -145,8 +96,7 @@
             <button
               type="button"
               (click)="navigateMonth(1)"
-              [disabled]="isLoading()"
-              class="flex items-center justify-center w-10 h-10 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              class="flex items-center justify-center w-11 h-11 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-700 hover:text-indigo-600 transition-all active:scale-95"
               aria-label="Próximo mês"
             >
               <svg
@@ -155,12 +105,93 @@
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                stroke-width="2"
+                stroke-width="2.5"
               >
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
               </svg>
             </button>
           </div>
+        </div>
+
+        <!-- Navigation Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <button
+            (click)="setView('installments')"
+            class="group text-left p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 hover:border-indigo-200 active:scale-[0.98]"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="bg-indigo-50 group-hover:bg-indigo-100 p-3 rounded-lg transition-colors flex-shrink-0"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6 text-indigo-600"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                  <path
+                    fill-rule="evenodd"
+                    d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-lg text-gray-900 mb-1">Parcelamentos</h3>
+                <p class="text-sm text-gray-500 leading-relaxed">
+                  Acompanhe suas compras parceladas
+                </p>
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-7 w-7 text-gray-400 group-hover:text-indigo-600 transition-colors flex-shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </button>
+          <button
+            (click)="setView('categories')"
+            class="group text-left p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 hover:border-indigo-200 active:scale-[0.98]"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="bg-indigo-50 group-hover:bg-indigo-100 p-3 rounded-lg transition-colors flex-shrink-0"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6 text-indigo-600"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a1 1 0 011-1h5a1 1 0 01.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-lg text-gray-900 mb-1">Categorias</h3>
+                <p class="text-sm text-gray-500 leading-relaxed">Organize suas transações</p>
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-7 w-7 text-gray-400 group-hover:text-indigo-600 transition-colors flex-shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </button>
         </div>
 
         <!-- Month/Year Picker Modal -->
@@ -246,319 +277,8 @@
           </div>
         }
 
-        <!-- Metrics Cards -->
-        @if (isLoading()) {
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="h-[120px] bg-gray-200 rounded-xl animate-pulse"></div>
-            <div class="h-[120px] bg-gray-200 rounded-xl animate-pulse"></div>
-            <div class="h-[120px] bg-gray-200 rounded-xl animate-pulse"></div>
-          </div>
-        } @else if (dataService.currentMonthlyView(); as monthlyView) {
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- Revenue Card -->
-            <div
-              class="bg-gradient-to-br from-emerald-100 to-green-200 text-green-900 p-6 rounded-xl shadow-lg"
-            >
-              <div class="flex items-center justify-between">
-                <div>
-                  <h3 class="text-sm font-semibold text-green-700">Total de Receitas</h3>
-                  <p class="text-3xl font-bold mt-2 text-emerald-600">
-                    R$ {{ monthlyView.summary.totalRevenue | number: '1.2-2' : 'pt' }}
-                  </p>
-                </div>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-12 w-12 text-emerald-500 opacity-60"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"
-                  />
-                  <path
-                    d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"
-                  />
-                </svg>
-              </div>
-            </div>
-
-            <!-- Expense Card -->
-            <div
-              class="bg-gradient-to-br from-rose-100 to-red-200 text-rose-900 p-6 rounded-xl shadow-lg"
-            >
-              <div class="flex items-center justify-between">
-                <div>
-                  <h3 class="text-sm font-semibold text-rose-700">Total de Despesas</h3>
-                  <p class="text-3xl font-bold mt-2 text-red-600">
-                    R$ {{ monthlyView.summary.totalExpense | number: '1.2-2' : 'pt' }}
-                  </p>
-                </div>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-12 w-12 text-red-500 opacity-60"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
-                  />
-                </svg>
-              </div>
-            </div>
-
-            <!-- Balance Card -->
-            <div
-              class="bg-gradient-to-br from-blue-100 to-indigo-200 text-blue-900 p-6 rounded-xl shadow-lg"
-            >
-              <div class="flex items-center justify-between">
-                <div>
-                  <h3 class="text-sm font-semibold text-indigo-700">Balanço Mensal</h3>
-                  <p
-                    class="text-3xl font-bold mt-2"
-                    [class.text-red-600]="monthlyView.summary.balance < 0"
-                    [class.text-indigo-600]="monthlyView.summary.balance >= 0"
-                  >
-                    R$ {{ monthlyView.summary.balance | number: '1.2-2' : 'pt' }}
-                  </p>
-                </div>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-12 w-12 text-indigo-500 opacity-60"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-                  <path
-                    fill-rule="evenodd"
-                    d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-        }
-
-        <!-- Top Expenses Section -->
-        <div class="bg-white rounded-xl shadow-lg p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-bold text-gray-800">Maiores Despesas do Mês</h2>
-            @if (topExpenses().length > 3 && !showAllExpenses()) {
-              <button
-                (click)="toggleShowAllExpenses()"
-                class="text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
-              >
-                Ver todas
-              </button>
-            }
-          </div>
-
-          @if (isLoading()) {
-            <div class="space-y-3">
-              @for (_ of [1, 2]; track $index) {
-                <div class="flex items-center gap-4">
-                  <div class="h-12 w-12 rounded-lg bg-gray-200 animate-pulse"></div>
-                  <div class="flex-1 space-y-2">
-                    <div class="h-4 w-3/4 rounded bg-gray-200 animate-pulse"></div>
-                    <div class="h-3 w-1/2 rounded bg-gray-200 animate-pulse"></div>
-                  </div>
-                  <div class="h-6 w-24 rounded bg-gray-200 animate-pulse"></div>
-                </div>
-              }
-            </div>
-          } @else if (topExpenses().length > 0) {
-            <div class="space-y-3">
-              @for (expense of topExpenses(); track trackById($index, expense)) {
-                <button
-                  (click)="onEditTransaction(expense)"
-                  class="w-full flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors text-left"
-                >
-                  <div
-                    class="w-12 h-12 rounded-lg flex items-center justify-center bg-red-100 text-red-600 flex-shrink-0"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-6 w-6"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path [attr.d]="getCategoryIcon(expense.category_id)" />
-                    </svg>
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <p class="font-semibold text-gray-800 truncate">
-                      {{ expense.description }}
-                      @if (
-                        expense.is_installment &&
-                        expense.installmentNumber &&
-                        expense.total_installments
-                      ) {
-                        <span class="text-sm text-gray-500"
-                          >({{ expense.installmentNumber }}/{{ expense.total_installments }})</span
-                        >
-                      }
-                    </p>
-                    <div class="flex items-center gap-2 mt-1">
-                      <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
-                      >
-                        {{ getCategoryName(expense.category_id) }}
-                      </span>
-                      @if (expense.payment_method) {
-                        <span class="text-xs text-gray-500">{{ expense.payment_method }}</span>
-                      }
-                    </div>
-                  </div>
-                  <p class="text-lg font-bold text-red-600 flex-shrink-0">
-                    - R$ {{ expense.amount | number: '1.2-2' : 'pt' }}
-                  </p>
-                </button>
-              }
-            </div>
-            @if (topExpenses().length === 0 || (topExpenses().length < 3 && !showAllExpenses())) {
-              <p class="text-center text-sm text-gray-500 italic mt-4">
-                Nenhuma outra despesa significativa este mês.
-              </p>
-            }
-          } @else {
-            <p class="text-center text-sm text-gray-500 italic">
-              Nenhuma outra despesa significativa este mês.
-            </p>
-          }
-        </div>
-
-        <!-- Detailed Transactions Section -->
-        <div class="bg-white rounded-xl shadow-lg">
-          <div class="p-6 border-b border-gray-200">
-            <div class="flex items-center justify-between">
-              <h2 class="text-xl font-bold text-gray-800">Lançamentos Detalhados</h2>
-              @if (dataService.currentMonthlyView(); as monthlyView) {
-                @if (monthlyView.transactions.length > 5 && !showAllTransactions()) {
-                  <button
-                    (click)="toggleShowAllTransactions()"
-                    class="text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
-                  >
-                    Ver tudo
-                  </button>
-                }
-              }
-            </div>
-          </div>
-
-          @if (isLoading()) {
-            <div class="p-4 space-y-2">
-              @for (_ of [1, 2, 3]; track $index) {
-                <div class="flex items-center gap-4">
-                  <div class="h-12 w-12 rounded-full bg-gray-200 animate-pulse"></div>
-                  <div class="flex-1 space-y-2">
-                    <div class="h-4 w-3/4 rounded bg-gray-200 animate-pulse"></div>
-                    <div class="h-3 w-1/2 rounded bg-gray-200 animate-pulse"></div>
-                  </div>
-                  <div class="h-6 w-24 rounded bg-gray-200 animate-pulse"></div>
-                </div>
-              }
-            </div>
-          } @else if (dataService.currentMonthlyView(); as monthlyView) {
-            @if (displayedTransactions().length > 0) {
-              <ul class="divide-y divide-gray-200">
-                @for (
-                  transaction of displayedTransactions();
-                  track trackById($index, transaction)
-                ) {
-                  <li class="p-4 hover:bg-gray-50 transition-colors">
-                    <button
-                      (click)="onEditTransaction(transaction)"
-                      class="w-full flex items-center gap-4 text-left"
-                    >
-                      <div
-                        class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
-                        [class.bg-emerald-100]="transaction.type === 'revenue'"
-                        [class.text-emerald-600]="transaction.type === 'revenue'"
-                        [class.bg-rose-100]="transaction.type === 'expense'"
-                        [class.text-rose-600]="transaction.type === 'expense'"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-6 w-6"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path [attr.d]="getCategoryIcon(transaction.category_id)" />
-                        </svg>
-                      </div>
-                      <div class="flex-1 min-w-0">
-                        <p class="font-semibold text-gray-800 truncate">
-                          {{ transaction.description }}
-                          @if (
-                            transaction.is_installment &&
-                            transaction.installmentNumber &&
-                            transaction.total_installments
-                          ) {
-                            <span class="text-sm text-gray-600"
-                              >(Parcela {{ transaction.installmentNumber }}/{{
-                                transaction.total_installments
-                              }})</span
-                            >
-                          }
-                        </p>
-                        <div class="flex items-center gap-2 mt-1 text-sm text-gray-600">
-                          <span
-                            class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-700"
-                          >
-                            {{ getCategoryName(transaction.category_id) }}
-                          </span>
-                          <span>•</span>
-                          <span>{{ transaction.date | date: 'dd/MM/yyyy' : '' : 'pt' }}</span>
-                          @if (transaction.payment_method) {
-                            <span>•</span>
-                            <span>{{ transaction.payment_method }}</span>
-                          }
-                        </div>
-                      </div>
-                      <div class="text-right flex-shrink-0">
-                        <p
-                          class="text-lg font-bold"
-                          [class.text-emerald-600]="transaction.type === 'revenue'"
-                          [class.text-red-600]="transaction.type === 'expense'"
-                        >
-                          {{ transaction.type === 'revenue' ? '+' : '-' }} R$
-                          {{ transaction.amount | number: '1.2-2' : 'pt' }}
-                        </p>
-                      </div>
-                    </button>
-                  </li>
-                }
-              </ul>
-              <div class="p-4 bg-gray-50 text-center text-sm text-gray-600">
-                Mostrando {{ displayedTransactions().length }} de
-                {{ monthlyView.transactions.length }} lançamentos do mês
-              </div>
-            } @else {
-              <div class="text-center p-12 text-gray-500">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="mx-auto h-12 w-12 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-                <p class="mt-4 font-semibold">Nenhum lançamento neste mês.</p>
-                <p class="text-sm">Adicione uma nova receita ou despesa para começar.</p>
-              </div>
-            }
-          }
-        </div>
+        <!-- Dashboard Component -->
+        <app-dashboard [currentDate]="currentDate()" />
       </div>
     }
     @case ('installments') {
