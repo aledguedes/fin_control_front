@@ -1,4 +1,94 @@
-@if (invoiceData(); as invoice) {
+@if (isLoading()) {
+  <!-- Skeleton Loader -->
+  <div class="min-h-screen bg-gray-100 p-4">
+    <div class="max-w-7xl mx-auto">
+      <!-- Header Skeleton -->
+      <div class="mb-6">
+        <div class="h-6 w-32 bg-gray-200 rounded animate-pulse"></div>
+      </div>
+
+      <!-- Main Content Skeleton -->
+      <div class="p-6 space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Left Sidebar Skeleton -->
+          <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
+              <div class="flex items-center justify-between gap-4">
+                <div class="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
+                <div class="h-6 w-16 bg-gray-200 rounded-full animate-pulse"></div>
+              </div>
+              <div class="border-t border-gray-200 pt-4 space-y-3">
+                <div class="flex items-center justify-between gap-4">
+                  <div class="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                  <div class="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+                <div class="flex items-center justify-between gap-4">
+                  <div class="h-4 w-28 bg-gray-200 rounded animate-pulse"></div>
+                  <div class="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+              </div>
+              <div class="border-t border-gray-200 pt-4">
+                <div class="h-4 w-16 bg-gray-200 rounded animate-pulse mb-2"></div>
+                <div class="h-10 w-40 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Content Skeleton -->
+          <div class="lg:col-span-2 space-y-6">
+            <!-- Cards Skeleton -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-between">
+              <div class="bg-white rounded-lg border border-gray-200 p-6 flex-1">
+                <div class="h-4 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
+                <div class="h-5 w-40 bg-gray-200 rounded animate-pulse mb-2"></div>
+                <div class="h-4 w-48 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+              <div class="bg-white rounded-lg border border-gray-200 p-6 flex-1">
+                <div class="h-4 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
+                <div class="h-5 w-40 bg-gray-200 rounded animate-pulse mb-2"></div>
+                <div class="h-4 w-48 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+            </div>
+
+            <!-- Table Skeleton -->
+            <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <div class="p-6">
+                <div class="space-y-4">
+                  @for (_ of [1, 2, 3, 4, 5]; track $index) {
+                    <div class="flex items-center justify-between">
+                      <div class="flex-1 space-y-2">
+                        <div class="h-4 w-48 bg-gray-200 rounded animate-pulse"></div>
+                        <div class="h-3 w-32 bg-gray-200 rounded animate-pulse"></div>
+                      </div>
+                      <div class="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
+                      <div class="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+                      <div class="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                  }
+                </div>
+              </div>
+              <!-- Totals Skeleton -->
+              <div class="border-t border-gray-200 bg-gray-50 p-6 space-y-2">
+                <div class="flex justify-between">
+                  <div class="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                  <div class="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+                <div class="flex justify-between">
+                  <div class="h-4 w-40 bg-gray-200 rounded animate-pulse"></div>
+                  <div class="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+                <div class="flex justify-between pt-2 border-t border-gray-300">
+                  <div class="h-5 w-16 bg-gray-200 rounded animate-pulse"></div>
+                  <div class="h-5 w-32 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else if (invoiceData(); as invoice) {
   <div class="min-h-screen bg-gray-100 p-4">
     <div class="max-w-7xl mx-auto">
       <!-- Header with Back Button -->
@@ -140,12 +230,14 @@
               <!-- Totals -->
               <div class="border-t border-gray-200 bg-gray-50 p-6 space-y-2">
                 <div class="flex justify-between text-sm">
-                  <span class="text-gray-600">Subtotal</span>
-                  <span class="font-medium text-gray-800">R$ {{ formattedSubtotal() }}</span>
+                  <span class="text-gray-600">Quantidade de Itens</span>
+                  <span class="font-medium text-gray-800"
+                    >{{ totalItems() }} {{ totalItems() === 1 ? 'item' : 'itens' }}</span
+                  >
                 </div>
                 <div class="flex justify-between text-sm">
-                  <span class="text-gray-600">Taxas / Impostos (0%)</span>
-                  <span class="font-medium text-gray-800">R$ 0,00</span>
+                  <span class="text-gray-600">Subtotal</span>
+                  <span class="font-medium text-gray-800">R$ {{ formattedSubtotal() }}</span>
                 </div>
                 <div class="flex justify-between text-lg font-bold border-t border-gray-300 pt-2">
                   <span class="text-gray-800">Total</span>

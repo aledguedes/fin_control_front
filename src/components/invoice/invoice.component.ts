@@ -41,6 +41,7 @@ export class InvoiceComponent implements OnInit {
   private shoppingService = inject(ShoppingService);
 
   listId = signal<string | null>(null);
+  isLoading = signal<boolean>(true);
 
   invoiceData = computed<ShoppingList | null>(() => {
     const id = this.listId();
@@ -61,14 +62,19 @@ export class InvoiceComponent implements OnInit {
 
     // Se a lista não existe ou não tem items, carregar os detalhes da API
     if (!existingList || !existingList.items || existingList.items.length === 0) {
+      this.isLoading.set(true);
       this.shoppingService.loadListDetails(listId).subscribe({
         next: () => {
           // Lista carregada e atualizada no signal, o computed invoiceData() será atualizado automaticamente
+          this.isLoading.set(false);
         },
         error: (err) => {
           console.error('Erro ao carregar detalhes da lista:', err);
+          this.isLoading.set(false);
         },
       });
+    } else {
+      this.isLoading.set(false);
     }
   }
 
@@ -139,6 +145,10 @@ export class InvoiceComponent implements OnInit {
 
   subtotal = computed(() => {
     return this.invoiceItems().reduce((sum, item) => sum + item.total, 0);
+  });
+
+  totalItems = computed(() => {
+    return this.invoiceItems().length;
   });
 
   formattedSubtotal = computed(() => {
