@@ -6,13 +6,36 @@
     <div class="p-6">
       <h2 class="text-2xl font-bold text-neutral-800 mb-6">{{ transactionToEdit() ? 'Editar' : 'Novo' }} Lançamento</h2>
       @if (transactionForm) {
-      <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
-        <div class="space-y-4">
-          <!-- Type -->
-          <div class="flex rounded-md shadow-sm">
-            <button type="button" (click)="transactionForm.get('type')?.setValue('expense')" [class.bg-indigo-600]="transactionForm.value.type === 'expense'" [class.text-white]="transactionForm.value.type === 'expense'" class="flex-1 px-4 py-3 text-base rounded-l-md border border-neutral-300 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 transition-colors">Despesa</button>
-            <button type="button" (click)="transactionForm.get('type')?.setValue('revenue')" [class.bg-indigo-600]="transactionForm.value.type === 'revenue'" [class.text-white]="transactionForm.value.type === 'revenue'" class="flex-1 px-4 py-3 text-base -ml-px rounded-r-md border border-neutral-300 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 transition-colors">Receita</button>
-          </div>
+        <form
+          [formGroup]="transactionForm"
+          id="transactionForm"
+          (ngSubmit)="onSubmit()"
+          class="flex flex-col"
+        >
+          <div class="space-y-4">
+            <!-- Type -->
+            <div class="flex rounded-md shadow-sm">
+              <button
+                type="button"
+                (click)="transactionForm.get('type')?.setValue('expense')"
+                [disabled]="!!transactionToEdit()"
+                [class.bg-indigo-600]="transactionForm.value.type === 'expense'"
+                [class.text-white]="transactionForm.value.type === 'expense'"
+                class="flex-1 px-4 py-3 text-base rounded-l-md border border-neutral-300 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Despesa
+              </button>
+              <button
+                type="button"
+                (click)="transactionForm.get('type')?.setValue('revenue')"
+                [disabled]="!!transactionToEdit()"
+                [class.bg-indigo-600]="transactionForm.value.type === 'revenue'"
+                [class.text-white]="transactionForm.value.type === 'revenue'"
+                class="flex-1 px-4 py-3 text-base -ml-px rounded-r-md border border-neutral-300 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Receita
+              </button>
+            </div>
 
           <!-- Description -->
           <div>

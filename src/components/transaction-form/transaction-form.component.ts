@@ -22,7 +22,99 @@ export class TransactionFormComponent implements OnInit {
   
   transactionForm!: FormGroup;
 
-  payment_methods: payment_method[] = ['Dinheiro', 'Débito', 'Crédito', 'Carnê', 'Boleto', 'Transferência', 'Financiamento', 'Empréstimo'];
+  payment_methods: payment_method[] = [
+    'Dinheiro',
+    'Débito',
+    'Crédito',
+    'Carnê',
+    'Boleto',
+    'Transferência',
+    'Financiamento',
+    'Empréstimo',
+  ];
+
+  // Métodos para controlar desabilitação dos checkboxes
+  private get isEditing(): boolean {
+    return !!this.transactionToEdit()?.id;
+  }
+
+  private get isOriginalInstallment(): boolean {
+    const data = this.transactionToEdit();
+    return (data as any)?.isInstallment === true || data?.is_installment === true;
+  }
+
+  private get isOriginalRecurrent(): boolean {
+    const data = this.transactionToEdit();
+    return (data as any)?.isRecurrent === true || data?.is_recurrent === true;
+  }
+
+  // Checkbox de parcelado deve estar desabilitado se:
+  // 1. É edição E já é parcelada (não pode mudar status)
+  // 2. É recorrente (nunca pode ser parcelada)
+  // 3. É edição E nenhum dos dois está marcado (lançamento simples não pode se tornar parcelado/recorrente)
+  isInstallmentDisabled(): boolean {
+    if (!this.transactionForm) return true;
+
+    const isRecurrent = this.transactionForm.get('is_recurrent')?.value ?? false;
+    const isInstallment = this.transactionForm.get('is_installment')?.value ?? false;
+
+    // Se é edição e já era parcelada, desabilitar ambos
+    if (this.isEditing && this.isOriginalInstallment) {
+      return true;
+    }
+
+    // Se é recorrente, sempre desabilitar parcelado
+    if (isRecurrent || this.isOriginalRecurrent) {
+      return true;
+    }
+
+    // Se é edição e nenhum dos dois está marcado, desabilitar (lançamento simples não pode mudar)
+    if (
+      this.isEditing &&
+      !isInstallment &&
+      !isRecurrent &&
+      !this.isOriginalInstallment &&
+      !this.isOriginalRecurrent
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  // Checkbox de recorrente deve estar desabilitado se:
+  // 1. É edição E já é parcelada (não pode mudar status)
+  // 2. É parcelada (não pode ser recorrente)
+  // 3. É edição E nenhum dos dois está marcado (lançamento simples não pode se tornar parcelado/recorrente)
+  isRecurrentDisabled(): boolean {
+    if (!this.transactionForm) return true;
+
+    const isInstallment = this.transactionForm.get('is_installment')?.value ?? false;
+    const isRecurrent = this.transactionForm.get('is_recurrent')?.value ?? false;
+
+    // Se é edição e já era parcelada, desabilitar ambos
+    if (this.isEditing && this.isOriginalInstallment) {
+      return true;
+    }
+
+    // Se é parcelada (atual ou original), desabilitar recorrente
+    if (isInstallment || this.isOriginalInstallment) {
+      return true;
+    }
+
+    // Se é edição e nenhum dos dois está marcado, desabilitar (lançamento simples não pode mudar)
+    if (
+      this.isEditing &&
+      !isInstallment &&
+      !isRecurrent &&
+      !this.isOriginalInstallment &&
+      !this.isOriginalRecurrent
+    ) {
+      return true;
+    }
+
+    return false;
+  }
 
   constructor() {
     effect(() => {
@@ -76,14 +168,30 @@ export class TransactionFormComponent implements OnInit {
       }
     });
 
-    this.transactionForm.get('is_installment')?.valueChanges.subscribe(is_installment => {
+    this.transactionForm.get('is_installment')?.valueChanges.subscribe((is_installment) => {
+      // Prevenir alterações se o campo estiver desabilitado (apenas em edição)
+      if (this.isInstallmentDisabled() && this.isEditing) {
+        // Restaurar o valor correto baseado no estado original
+        const restoreValue = this.isOriginalInstallment;
+        this.transactionForm.get('is_installment')?.setValue(restoreValue, { emitEvent: false });
+        return;
+      }
+
       if (is_installment) {
         this.transactionForm.get('is_recurrent')?.setValue(false);
       }
       this.updateInstallmentValidators();
     });
 
-    this.transactionForm.get('is_recurrent')?.valueChanges.subscribe(is_recurrent => {
+    this.transactionForm.get('is_recurrent')?.valueChanges.subscribe((is_recurrent) => {
+      // Prevenir alterações se o campo estiver desabilitado (apenas em edição)
+      if (this.isRecurrentDisabled() && this.isEditing) {
+        // Restaurar o valor correto baseado no estado original
+        const restoreValue = this.isOriginalRecurrent;
+        this.transactionForm.get('is_recurrent')?.setValue(restoreValue, { emitEvent: false });
+        return;
+      }
+
       const recurrenceDateControl = this.transactionForm.get('recurrence_start_date');
       if (is_recurrent) {
         this.transactionForm.get('is_installment')?.setValue(false);
