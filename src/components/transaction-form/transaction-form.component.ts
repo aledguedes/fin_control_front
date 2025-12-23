@@ -44,7 +44,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
   ];
 
   // Métodos para controlar desabilitação dos checkboxes
-  private get isEditing(): boolean {
+  isEditing(): boolean {
     return !!this.transactionToEdit()?.id;
   }
 
@@ -61,7 +61,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
   // Checkbox de parcelado deve estar desabilitado se:
   // 1. É edição E já é parcelada (não pode mudar status)
   // 2. É recorrente (nunca pode ser parcelada)
-  // 3. Nenhum dos dois está marcado E não é edição (ambos false)
+  // 3. Modo edição E nenhum dos dois está marcado (ambos false)
   isInstallmentDisabled(): boolean {
     if (!this.transactionForm) return true;
 
@@ -69,7 +69,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
     const isInstallment = this.transactionForm.get('is_installment')?.value ?? false;
 
     // Se é edição e já era parcelada, desabilitar ambos
-    if (this.isEditing && this.isOriginalInstallment) {
+    if (this.isEditing() && this.isOriginalInstallment) {
       return true;
     }
 
@@ -78,18 +78,19 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
       return true;
     }
 
-    // Se nenhum dos dois está marcado e não é edição, desabilitar
-    if (!isInstallment && !isRecurrent && !this.isEditing) {
+    // Se nenhum dos dois está marcado e é modo edição, desabilitar
+    if (!isInstallment && !isRecurrent && this.isEditing()) {
       return true;
     }
 
+    // No modo criação, se ambos estão false, habilitar
     return false;
   }
 
   // Checkbox de recorrente deve estar desabilitado se:
   // 1. É edição E já é parcelada (não pode mudar status)
   // 2. É parcelada (não pode ser recorrente)
-  // 3. Nenhum dos dois está marcado E não é edição (ambos false)
+  // 3. Modo edição E nenhum dos dois está marcado (ambos false)
   isRecurrentDisabled(): boolean {
     if (!this.transactionForm) return true;
 
@@ -97,7 +98,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
     const isRecurrent = this.transactionForm.get('is_recurrent')?.value ?? false;
 
     // Se é edição e já era parcelada, desabilitar ambos
-    if (this.isEditing && this.isOriginalInstallment) {
+    if (this.isEditing() && this.isOriginalInstallment) {
       return true;
     }
 
@@ -106,11 +107,12 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
       return true;
     }
 
-    // Se nenhum dos dois está marcado e não é edição, desabilitar
-    if (!isInstallment && !isRecurrent && !this.isEditing) {
+    // Se nenhum dos dois está marcado e é modo edição, desabilitar
+    if (!isInstallment && !isRecurrent && this.isEditing()) {
       return true;
     }
 
+    // No modo criação, se ambos estão false, habilitar
     return false;
   }
 
@@ -151,6 +153,15 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
       event.preventDefault();
       event.stopPropagation();
     }
+  }
+
+  handleTypeClick(event: Event, type: 'expense' | 'revenue'): void {
+    if (this.isEditing()) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    this.transactionForm.get('type')?.setValue(type);
   }
 
   private buildForm(data: Partial<Transaction> | null = null): void {
@@ -197,6 +208,14 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
 
   private setupFormListeners(): void {
     this.transactionForm.get('type')?.valueChanges.subscribe((type) => {
+      // Não permitir alteração de tipo no modo de edição
+      if (this.isEditing()) {
+        // Restaurar o tipo original
+        const originalType = this.transactionToEdit()?.type ?? 'expense';
+        this.transactionForm.get('type')?.setValue(originalType, { emitEvent: false });
+        return;
+      }
+
       this.transactionForm.get('category_id')?.reset();
       if (type === 'revenue') {
         this.transactionForm.patchValue({
@@ -214,7 +233,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
       if (this.isInstallmentDisabled()) {
         // Restaurar o valor correto baseado no estado
         let restoreValue = false;
-        if (this.isEditing && this.isOriginalInstallment) {
+        if (this.isEditing() && this.isOriginalInstallment) {
           restoreValue = true; // Restaurar para true se era parcelada originalmente
         } else {
           restoreValue = false; // Caso contrário, manter false
@@ -234,7 +253,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
       if (this.isRecurrentDisabled()) {
         // Restaurar o valor correto baseado no estado
         let restoreValue = false;
-        if (this.isEditing && this.isOriginalRecurrent) {
+        if (this.isEditing() && this.isOriginalRecurrent) {
           restoreValue = true; // Restaurar para true se era recorrente originalmente
         } else {
           restoreValue = false; // Caso contrário, manter false

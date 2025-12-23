@@ -5,8 +5,16 @@ import { Transaction } from '../models/transaction.model';
 export class UiService {
   isTransactionModalOpen = signal(false);
   editingTransaction = signal<Partial<Transaction> | null>(null);
+  
+  // Estado de agrupamento
+  isGroupingMode = signal(false);
+  selectedTransactions = signal<Set<string>>(new Set());
 
   openTransactionModal(transaction: Partial<Transaction> | null = null): void {
+    // Não permitir abrir modal de edição quando estiver em modo de agrupamento
+    if (this.isGroupingMode() && transaction) {
+      return;
+    }
     this.editingTransaction.set(transaction);
     this.isTransactionModalOpen.set(true);
   }
@@ -14,5 +22,28 @@ export class UiService {
   closeTransactionModal(): void {
     this.isTransactionModalOpen.set(false);
     this.editingTransaction.set(null);
+  }
+
+  toggleGroupingMode(): void {
+    const newValue = !this.isGroupingMode();
+    this.isGroupingMode.set(newValue);
+    if (!newValue) {
+      // Resetar seleção quando desabilitar o modo de agrupamento
+      this.selectedTransactions.set(new Set());
+    }
+  }
+
+  toggleTransactionSelection(transactionId: string): void {
+    const current = new Set(this.selectedTransactions());
+    if (current.has(transactionId)) {
+      current.delete(transactionId);
+    } else {
+      current.add(transactionId);
+    }
+    this.selectedTransactions.set(current);
+  }
+
+  isTransactionSelected(transactionId: string): boolean {
+    return this.selectedTransactions().has(transactionId);
   }
 }

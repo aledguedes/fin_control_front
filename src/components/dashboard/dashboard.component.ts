@@ -22,7 +22,7 @@ import { finalize } from 'rxjs';
 })
 export class DashboardComponent {
   dataService = inject(DataService);
-  private uiService = inject(UiService);
+  uiService = inject(UiService);
   private cdr = inject(ChangeDetectorRef);
 
   // Receive currentDate from parent component
@@ -47,7 +47,31 @@ export class DashboardComponent {
     const view = this.dataService.currentMonthlyView();
     if (!view) return [];
 
-    return this.showAllTransactions() ? view.transactions : view.transactions.slice(0, 5);
+    let transactions = view.transactions;
+
+    // Se o modo de agrupamento estiver ativo, mostrar apenas despesas
+    if (this.uiService.isGroupingMode()) {
+      transactions = transactions.filter((t) => t.type === 'expense');
+    }
+
+    return this.showAllTransactions() ? transactions : transactions.slice(0, 5);
+  });
+
+  // Valor total das despesas agrupadas selecionadas
+  groupedAmount = computed(() => {
+    if (!this.uiService.isGroupingMode()) {
+      return 0;
+    }
+
+    const view = this.dataService.currentMonthlyView();
+    if (!view) return 0;
+
+    const selectedIds = this.uiService.selectedTransactions();
+    const selectedTransactions = view.transactions.filter(
+      (t) => t.type === 'expense' && selectedIds.has(t.id)
+    );
+
+    return selectedTransactions.reduce((sum, t) => sum + t.amount, 0);
   });
 
   constructor() {
@@ -97,7 +121,27 @@ export class DashboardComponent {
     this.showAllTransactions.update((v) => !v);
   }
 
+  toggleGroupingMode(): void {
+    this.uiService.toggleGroupingMode();
+  }
+
+  handleTransactionClick(transaction: MonthlyTransaction): void {
+    if (this.uiService.isGroupingMode()) {
+      // No modo de agrupamento, apenas despesas podem ser selecionadas
+      if (transaction.type === 'expense') {
+        this.uiService.toggleTransactionSelection(transaction.id);
+      }
+    } else {
+      // Fora do modo de agrupamento, permite edição
+      this.onEdit(transaction);
+    }
+  }
+
   onEdit(monthlyTx: MonthlyTransaction) {
+    // Não permitir edição quando estiver em modo de agrupamento
+    if (this.uiService.isGroupingMode()) {
+      return;
+    }
     // Aceitar ambos os formatos (camelCase da API e snake_case do modelo)
     const is_installment = monthlyTx.isInstallment ?? monthlyTx.is_installment ?? false;
     const is_recurrent = monthlyTx.isRecurrent ?? monthlyTx.is_recurrent ?? false;
