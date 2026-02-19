@@ -7,7 +7,16 @@ export interface FinancialCategory {
   updatedAt?: string;
 }
 
-export type payment_method = 'Dinheiro' | 'Débito' | 'Crédito' | 'Carnê' | 'Boleto' | 'Transferência' | 'Financiamento' | 'Empréstimo';
+export type payment_method =
+  | 'Dinheiro'
+  | 'Débito'
+  | 'Crédito'
+  | 'Carnê'
+  | 'Boleto'
+  | 'Transferência'
+  | 'Financiamento'
+  | 'Empréstimo'
+  | 'Débito Automático';
 
 export interface InstallmentDetails {
   total_installments: number;
@@ -50,17 +59,17 @@ export interface InstallmentEntry {
 
 // This is a derived model for the installments dashboard, aligned with API
 export interface InstallmentPlan {
-    id: string;
-    description: string;
-    totalAmount: number;
-    installmentAmount: number;
-    totalInstallments: number;
-    paidInstallments: number;
-    remainingInstallments: number;
-    startDate: string; // YYYY-MM-DD
-    status: 'ativo' | 'atrasado' | 'concluído';
-    type: 'revenue' | 'expense';
-    category_id: string;
+  id: string;
+  description: string;
+  totalAmount: number;
+  installmentAmount: number;
+  totalInstallments: number;
+  paidInstallments: number;
+  remainingInstallments: number;
+  startDate: string; // YYYY-MM-DD
+  status: 'ativo' | 'atrasado' | 'concluído';
+  type: 'revenue' | 'expense';
+  category_id: string;
 }
 
 export interface MonthlyTransaction {
@@ -90,5 +99,5 @@ export interface MonthlyView {
     totalRevenue: number;
     totalExpense: number;
     balance: number;
-  }
+  };
 }

@@ -1,6 +1,11 @@
 import { Injectable, signal, inject, computed } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Transaction, FinancialCategory, InstallmentPlan, MonthlyView } from '../models/transaction.model';
+import {
+  Transaction,
+  FinancialCategory,
+  InstallmentPlan,
+  MonthlyView,
+} from '../models/transaction.model';
 import { Observable, tap, forkJoin, throwError } from 'rxjs';
 // FIX: Import `map` operator from rxjs.
 import { catchError, map } from 'rxjs/operators';
@@ -27,27 +32,31 @@ export class DataService {
   currentMonthlyView = this.monthlyView.asReadonly();
   navigateToInstallments = this._navigateToInstallments.asReadonly();
 
-  revenueCategories = computed(() => this.allCategories().filter(c => c.type === 'revenue'));
-  expenseCategories = computed(() => this.allCategories().filter(c => c.type === 'expense'));
-  
+  revenueCategories = computed(() => this.allCategories().filter((c) => c.type === 'revenue'));
+  expenseCategories = computed(() => this.allCategories().filter((c) => c.type === 'expense'));
+
   loadInitialData(): Observable<any> {
     return forkJoin({
-      categories: this.http.get<{categories: FinancialCategory[]}>(`${this.apiUrl}/categories`),
-      installmentPlans: this.http.get<{installmentPlans: InstallmentPlan[]}>(`${this.apiUrl}/summary/installment-plans`),
+      categories: this.http.get<{ categories: FinancialCategory[] }>(`${this.apiUrl}/categories`),
+      installmentPlans: this.http.get<{ installmentPlans: InstallmentPlan[] }>(
+        `${this.apiUrl}/summary/installment-plans`,
+      ),
     }).pipe(
-      tap(data => {
+      tap((data) => {
         this.categories.set(data.categories.categories);
         this.installmentPlans.set(data.installmentPlans.installmentPlans);
-      })
+      }),
     );
   }
-  
+
   refreshInstallmentPlans(): Observable<InstallmentPlan[]> {
     // FIX: Use `map` to transform the stream to match the return type, which fixes the type inference for `data` in `tap`.
-    return this.http.get<{installmentPlans: InstallmentPlan[]}>(`${this.apiUrl}/summary/installment-plans`).pipe(
-        tap(data => this.installmentPlans.set(data.installmentPlans)),
-        map(data => data.installmentPlans)
-    );
+    return this.http
+      .get<{ installmentPlans: InstallmentPlan[] }>(`${this.apiUrl}/summary/installment-plans`)
+      .pipe(
+        tap((data) => this.installmentPlans.set(data.installmentPlans)),
+        map((data) => data.installmentPlans),
+      );
   }
 
   fetchMonthlyView(date: Date): Observable<MonthlyView> {
@@ -64,16 +73,16 @@ export class DataService {
           installment_number: tx.installment_number ?? tx.installmentNumber,
           parent_id: tx.parent_id ?? tx.parentId,
         }));
-        
+
         return {
           ...response,
           transactions: mappedTransactions,
         } as MonthlyView;
       }),
-      tap((view) => this.monthlyView.set(view))
+      tap((view) => this.monthlyView.set(view)),
     );
   }
-  
+
   addTransaction(transactionData: Omit<Transaction, 'id'>): Observable<Transaction> {
     return this.http.post<Transaction>(`${this.apiUrl}/transactions`, transactionData).pipe(
       tap(() => {
@@ -82,26 +91,29 @@ export class DataService {
         this.cacheService.clearByPattern('/summary/installment-plans');
         this.notificationService.show('Lançamento adicionado!', 'success');
       }),
-      catchError(err => {
+      catchError((err) => {
         this.notificationService.show('Erro ao adicionar lançamento.', 'error');
         return throwError(() => err);
-      })
+      }),
     );
   }
 
   updateTransaction(transaction: Transaction): Observable<Transaction> {
-    return this.http.put<Transaction>(`${this.apiUrl}/transactions/${transaction.id}`, transaction).pipe(
-      tap(() => {
-        // Invalidar cache relacionado
-        this.cacheService.clearByPattern('/summary/monthly-view');
-        this.cacheService.clearByPattern('/summary/installment-plans');
-        this.notificationService.show('Lançamento atualizado!', 'success');
-      }),
-      catchError(err => {
-        this.notificationService.show('Erro ao atualizar lançamento.', 'error');
-        return throwError(() => err);
-      })
-    );
+    console.log('UPDATE TRANSACTION', transaction);
+    return this.http
+      .put<Transaction>(`${this.apiUrl}/transactions/${transaction.id}`, transaction)
+      .pipe(
+        tap(() => {
+          // Invalidar cache relacionado
+          this.cacheService.clearByPattern('/summary/monthly-view');
+          this.cacheService.clearByPattern('/summary/installment-plans');
+          this.notificationService.show('Lançamento atualizado!', 'success');
+        }),
+        catchError((err) => {
+          this.notificationService.show('Erro ao atualizar lançamento.', 'error');
+          return throwError(() => err);
+        }),
+      );
   }
 
   deleteTransaction(id: string): Observable<void> {
@@ -112,32 +124,38 @@ export class DataService {
         this.cacheService.clearByPattern('/summary/installment-plans');
         this.notificationService.show('Lançamento excluído!', 'success');
       }),
-      catchError(err => {
+      catchError((err) => {
         this.notificationService.show('Erro ao excluir lançamento.', 'error');
         return throwError(() => err);
-      })
+      }),
     );
   }
 
   addCategory(categoryData: Omit<FinancialCategory, 'id'>): Observable<FinancialCategory> {
     return this.http.post<FinancialCategory>(`${this.apiUrl}/categories`, categoryData).pipe(
-      tap(newCategory => {
+      tap((newCategory) => {
         // Invalidar cache de categorias
         this.cacheService.clearByPattern('/categories');
-        this.categories.update(current => [...current, newCategory].sort((a,b) => a.name.localeCompare(b.name)));
+        this.categories.update((current) =>
+          [...current, newCategory].sort((a, b) => a.name.localeCompare(b.name)),
+        );
         this.notificationService.show('Categoria adicionada!', 'success');
       }),
-      catchError(err => {
+      catchError((err) => {
         this.notificationService.show('Erro ao adicionar categoria.', 'error');
         return throwError(() => err);
-      })
+      }),
     );
   }
 
   getCategoryById(id: string): FinancialCategory | undefined {
-    return this.categories().find(c => c.id === id);
+    return this.categories().find((c) => c.id === id);
   }
-  
-  triggerInstallmentsNavigation() { this._navigateToInstallments.set(true); }
-  resetInstallmentsNavigation() { this._navigateToInstallments.set(false); }
+
+  triggerInstallmentsNavigation() {
+    this._navigateToInstallments.set(true);
+  }
+  resetInstallmentsNavigation() {
+    this._navigateToInstallments.set(false);
+  }
 }

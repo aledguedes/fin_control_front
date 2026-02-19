@@ -41,6 +41,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
     'Transferência',
     'Financiamento',
     'Empréstimo',
+    'Débito Automático',
   ];
 
   // Métodos para controlar desabilitação dos checkboxes
